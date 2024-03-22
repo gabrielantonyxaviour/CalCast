@@ -67,7 +67,7 @@ contract CalCast{
     event CallCancelled(uint256 bookingId);
     event BookingPeriodLimitUpdated(uint256 bookingPeriodLimit);
 
-    function createProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing, uint256 _minimumKarma,  string memory _profileMetadata) public 
+    function createProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing, uint256 _minimumKarma,  string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == true) revert ProfileAlreadyExists(_farcasterId);
         profiles[_farcasterId] = Profile(_farcasterId, _timeSlots, _timePeriods, _pricing,_minimumKarma,   _profileMetadata, true);
@@ -75,7 +75,7 @@ contract CalCast{
         _profileCounter++;
     }
 
-    function updateProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing,uint256 _minimumKarma, string memory _profileMetadata) public 
+    function updateProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing,uint256 _minimumKarma, string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timeSlots = _timeSlots;
@@ -86,14 +86,14 @@ contract CalCast{
     }
     
 
-    function updatePricing(uint256 _farcasterId, uint256[] memory _pricing) public 
+    function updatePricing(uint256 _farcasterId, uint256[] memory _pricing) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].pricing = _pricing;
         emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, _pricing, profiles[_farcasterId].minimumKarma, profiles[_farcasterId].profileMetadata);
     }   
 
-    function updateProfileTimeSlots(uint256 _farcasterId, uint256[] memory _timeSlots) public 
+    function updateProfileTimeSlots(uint256 _farcasterId, uint256[] memory _timeSlots) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timeSlots = _timeSlots;
@@ -101,21 +101,21 @@ contract CalCast{
 
     }
 
-    function updateProfileTimePeriods(uint256 _farcasterId, uint256[] memory timePeriods) public 
+    function updateProfileTimePeriods(uint256 _farcasterId, uint256[] memory timePeriods) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timePeriods = timePeriods;
         emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, timePeriods, profiles[_farcasterId].pricing,profiles[_farcasterId].minimumKarma, profiles[_farcasterId].profileMetadata);
     }
 
-    function updateMinimumKarma(uint256 _farcasterId, uint256 _minimumKarma) public 
+    function updateMinimumKarma(uint256 _farcasterId, uint256 _minimumKarma) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].minimumKarma = _minimumKarma;
         emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing, _minimumKarma, profiles[_farcasterId].profileMetadata);
     }
 
-    function updateProfileMetadata(uint256 _farcasterId, string memory _profileMetadata) public 
+    function updateProfileMetadata(uint256 _farcasterId, string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].profileMetadata = _profileMetadata;
@@ -129,7 +129,7 @@ contract CalCast{
         emit BookingPeriodLimitUpdated(_bookingPeriodLimit);
     }
 
-    function bookCall(uint256 _senderFarcasterId,uint256 _senderKarma, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId) public payable returns (uint256)
+    function bookCall(uint256 _senderFarcasterId,uint256 _senderKarma, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId) public payable onlyOwner
     {
         if(_senderKarma < profiles[_profileFarcasterId].minimumKarma) revert InsufficientKarma(_senderFarcasterId, _profileFarcasterId, _senderKarma, profiles[_profileFarcasterId].minimumKarma);
         if(profiles[_profileFarcasterId].exists == false) revert ProfileDoesNotExist(_profileFarcasterId);
@@ -156,7 +156,7 @@ contract CalCast{
         _bookingCounter++;
     }
 
-    function cancelCall(uint256 _profileFarcasterId, uint256 _timeSlot, uint256 _timePeriod) public returns (uint256)
+    function cancelCall(uint256 _profileFarcasterId, uint256 _timeSlot) public onlyOwner
     {
         if(bookingTimeCheck[_profileFarcasterId][_timeSlot].exists == false) revert BookingDoesNotExist(_bookingCounter);
         bookingTimeCheck[_profileFarcasterId][_timeSlot].exists=false;
