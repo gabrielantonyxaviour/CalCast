@@ -21,4 +21,4 @@ Pitch Deck =>
 Demo Video =>
 ETHGlboal Dashboard =>
 
-#### Made with 💜 by [@fabianferno](https://x.com/fabianferno), [@gabrielaxy](https://x.com/gabrielaxy) and [@LeoFranklin_15](https://x.com/LeoFranklin_15)
+#### Made with 💜 by [@fabianferno](https://x.com/fabianferno target="\_blank"), [@gabrielaxy](https://x.com/gabrielaxy target="\_blank") and [@LeoFranklin_15](https://x.com/LeoFranklin_15 target="\_blank")
