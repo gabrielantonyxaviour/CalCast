@@ -21,6 +21,5 @@ Pitch Deck =>
 Demo Video =>
 ETHGlboal Dashboard =>
 
-#### Made with 💜 by [@fabianferno](https://x.com/fabianferno target="\_blank"), [@gabrielaxy](https://x.com/gabrielaxy target="\_blank") and [@LeoFranklin_15](https://x.com/LeoFranklin_15 target="\_blank")
-
-[A Link](https://x.com/fabianferno "title" target="\_blank")
+<h4>Made with 💜 by <a href="https://x.com/fabianferno" target="_blank">@fabianferno</a> <a href="https://x.com/gabrielaxy" target="_blank">@gabrielaxy</a> <a href="https://x.com/LeoFranklin_15" target="_blank">@LeoFranklin_15</a>
+<h4>
