@@ -64,10 +64,11 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="http://localhost:3000/calendar.png"
+                  src="https://calcast.vercel.app/calendar.png"
                   width={64}
                   height={64}
-                ></img>
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
@@ -76,7 +77,7 @@ const handleRequest = frames(async (ctx) => {
                 fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
           <div
@@ -84,7 +85,6 @@ const handleRequest = frames(async (ctx) => {
               color: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               marginTop: 50,
             }}
           >
@@ -93,30 +93,22 @@ const handleRequest = frames(async (ctx) => {
                 display: "flex",
                 gap: 10,
                 alignItems: "center",
+                justifyContent: "flex-end",
               }}
             >
               <div
                 style={{
                   color: "white",
-                  fontSize: 40,
+                  fontSize: 60,
                   marginBottom: 8,
                 }}
               >
                 0xLeo
               </div>
-              {/* <hr
-                style={{
-                  width: "15%", // Adjust the width of the line as needed
-                  margin: 0,
-                  borderWidth: 0.5,
-                  borderColor: "white",
-                  transform: "rotate(-49deg)", // Rotate the line to make it diagonal
-                }}
-              /> */}
               <hr
                 style={{
                   borderColor: "white",
-                  width: 50,
+                  width: 70,
                   transform: "rotate(-65deg)",
                   margin: 0,
                   borderWidth: 1,
@@ -129,21 +121,23 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="http://localhost:3000/calendar.png" // Replace 'circular_image_url.jpg' with the URL of your circular image
+                  src="https://calcast.vercel.app/calendar.png"
                   alt="Circular Image"
                   style={{
-                    borderRadius: "50%", // Make the image circular
-                    border: "1px solid white", // Optional: add border to the circular image
-                    width: 60, // Adjust width and height as needed
-                    height: 60,
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 80,
+                    height: 80,
                   }}
                 />
               </div>
             </div>
             <div
               style={{
-                fontSize: 14,
+                fontSize: 30,
                 marginTop: 8,
+                alignSelf: "flex-end",
+                color: "gray",
               }}
             >
               Talks about Infrastructure and tooling
@@ -152,9 +146,12 @@ const handleRequest = frames(async (ctx) => {
           <div
             style={{
               color: "white",
+              alignSelf: "flex-start",
+              fontSize: 38,
+              marginTop: 10,
             }}
           >
-            Schedule
+            schedule a call for ?
           </div>
         </div>
       ),
