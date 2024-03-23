@@ -12,6 +12,7 @@ import {
   ValidateCaptchaChallengeInput,
   ValidateCaptchaChallengeOutput,
 } from "@airstack/frames";
+import { createGoogleCalendarLink } from "@/lib/calendar";
 
 const handleRequest = frames(async (ctx) => {
   const booking = ctx.searchParams;
@@ -721,7 +722,24 @@ const handleRequest = frames(async (ctx) => {
     const d = booking["d"].toString();
 
     const dur = booking["duration"].toString();
-
+    const dates = getNextSixDates();
+    const timeslots = createTimeSlots("06:00", "13:00");
+    const start_date = new Date(
+      2024,
+      3,
+      parseInt(dates[parseInt(d)]),
+      parseInt(timeslots[parseInt(t)].split("-")[0].split(":")[0]),
+      parseInt(timeslots[parseInt(t)].split("-")[0].split(":")[1])
+    );
+    const end_date = new Date(
+      2024,
+      3,
+      parseInt(dates[parseInt(d)]),
+      parseInt(timeslots[parseInt(t)].split("-")[1].split(":")[0]),
+      parseInt(timeslots[parseInt(t)].split("-")[1].split(":")[1])
+    );
+    const link = createGoogleCalendarLink(start_date, end_date, "meeting");
+    console.log(link);
     return {
       image: (
         <div
@@ -864,11 +882,7 @@ const handleRequest = frames(async (ctx) => {
         >
           Back
         </Button>,
-        <Button
-          action="tx"
-          target="/txdata"
-          post_url={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&verified=true&booked=true`}
-        >
+        <Button action="link" target={link}>
           Add to Calender
         </Button>,
       ],
