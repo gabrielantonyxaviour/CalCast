@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
   BookingPeriodLimitUpdated as BookingPeriodLimitUpdatedEvent,
   CallBooked as CallBookedEvent,
@@ -51,9 +51,7 @@ export function handleCallBooked(event: CallBookedEvent): void {
 }
 
 export function handleCallCancelled(event: CallCancelledEvent): void {
-  let entity = Booking.load(event.params.bookingId.toHex());
-
-  // delete this entity
+  store.remove("Booking", event.params.bookingId.toHexString());
 }
 
 export function handleProfileCreated(event: ProfileCreatedEvent): void {
