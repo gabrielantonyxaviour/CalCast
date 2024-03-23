@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: CalCast
@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0xb59978350380C74Ba1551C37c64Eec0c445F798d"
       abi: CalCast
-      startBlock: 7709506
+      startBlock: 7706027
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -21,7 +21,7 @@ dataSources:
         - ProfileUpdated
       abis:
         - name: CalCast
-          file: ./abis/CalCast.json
+          file: CalCast/abis/CalCast.json
       eventHandlers:
         - event: BookingPeriodLimitUpdated(uint256)
           handler: handleBookingPeriodLimitUpdated
@@ -33,4 +33,4 @@ dataSources:
           handler: handleProfileCreated
         - event: ProfileUpdated(uint256,uint256[],uint256[],uint256[],uint256,string)
           handler: handleProfileUpdated
-      file: ./src/cal-cast.ts
+      file: CalCast/CalCast.wasm

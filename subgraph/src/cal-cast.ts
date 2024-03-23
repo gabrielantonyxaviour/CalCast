@@ -15,8 +15,31 @@ export function handleBookingPeriodLimitUpdated(
 export function handleCallBooked(event: CallBookedEvent): void {
   let entity = new Booking(event.params.bookingId.toHex());
 
-  entity.booker = event.params.bookerFarcasterId.toHexString();
-  entity.receiver = event.params.profileFarcasterId.toHexString();
+  let receiverProfile = Profile.load(
+    event.params.profileFarcasterId.toHexString()
+  );
+  if (receiverProfile != null) {
+    receiverProfile.totalBookings = receiverProfile.totalBookings.plus(
+      BigInt.fromI32(1)
+    );
+    entity.receiver = receiverProfile.id;
+    receiverProfile.totalEarnings = receiverProfile.totalEarnings.plus(
+      event.params.amount
+    );
+    receiverProfile.save();
+  }
+
+  let bookerProfile = Profile.load(
+    event.params.bookerFarcasterId.toHexString()
+  );
+  if (bookerProfile != null) {
+    bookerProfile.totalBookings = bookerProfile.totalEarnings.plus(
+      BigInt.fromI32(1)
+    );
+    entity.booker = bookerProfile.id;
+    bookerProfile.save();
+  }
+
   entity.day = BigInt.fromI32(event.params.day);
   entity.month = BigInt.fromI32(event.params.month);
   entity.year = BigInt.fromI32(event.params.year);
@@ -34,15 +57,18 @@ export function handleCallCancelled(event: CallCancelledEvent): void {
 }
 
 export function handleProfileCreated(event: ProfileCreatedEvent): void {
-  let entity = new Profile(event.params.farcasterId.toString());
+  let entity = new Profile(event.params.farcasterId.toHexString());
 
   entity.farcasterId = event.params.farcasterId;
+  entity.creatorAddress = event.transaction.from;
   entity.timeSlots = event.params.timeSlots;
   entity.timePeriods = event.params.timePeriods;
   entity.prices = event.params.pricing;
   entity.minimumKarma = event.params.minimumKarma;
   entity.metadata = event.params.profileMetadata;
   entity.transactionHash = event.transaction.hash;
+  entity.totalBookings = BigInt.fromI32(0);
+  entity.totalEarnings = BigInt.fromI32(0);
 
   entity.save();
 }
