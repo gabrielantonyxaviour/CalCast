@@ -21,6 +21,16 @@ const handleRequest = frames(async (ctx) => {
   console.log(booking["d"]);
   if (booking["duration"] === undefined) {
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
@@ -176,6 +186,16 @@ const handleRequest = frames(async (ctx) => {
     console.log(booking);
     const dates = getNextSixDates();
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
@@ -331,6 +351,16 @@ const handleRequest = frames(async (ctx) => {
     const visibleTimeSlots = timeslots.slice(startIndex, endIndex);
 
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
@@ -495,6 +525,16 @@ const handleRequest = frames(async (ctx) => {
     // console.log(ctx.message?.state);
 
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div style={{ display: "flex" }}>
           <img src={res.image}></img>
@@ -536,6 +576,16 @@ const handleRequest = frames(async (ctx) => {
 
     console.log(res);
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div style={{ display: "flex" }}>
           <img src={res.image}></img>
@@ -562,6 +612,16 @@ const handleRequest = frames(async (ctx) => {
     const dur = booking["duration"].toString();
 
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
@@ -743,6 +803,16 @@ const handleRequest = frames(async (ctx) => {
     const link = createGoogleCalendarLink(start_date, end_date, "meeting");
     console.log(link);
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{

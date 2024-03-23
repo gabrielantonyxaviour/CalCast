@@ -7,6 +7,16 @@ const handleRequest = frames(async (ctx) => {
   const ownerFID: number = 2134;
   if (userFID !== ownerFID) {
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
@@ -148,6 +158,16 @@ const handleRequest = frames(async (ctx) => {
       ["0xGabby", "25/3", "7.00 - 7.30"],
     ];
     return {
+      accepts: [
+        {
+          id: "farcaster",
+          version: "vNext",
+        },
+        {
+          id: "xmtp",
+          version: "vNext",
+        },
+      ],
       image: (
         <div
           style={{
