@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum
     name: CalCast
-    network: base-testnet
+    network: base-sepolia
     source:
       address: "0xb59978350380C74Ba1551C37c64Eec0c445F798d"
       abi: CalCast
