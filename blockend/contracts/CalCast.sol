@@ -55,20 +55,21 @@ contract CalCast{
     mapping(uint256 => mapping(bytes32 => mapping(uint256 => BookingTimeCheck))) public bookingTimeCheck;
     uint256 public bookingPeriodLimit= 1 hours;
     address public owner;
+    bool public onlyOwnerEnabled;
 
     constructor(){
         owner = msg.sender;
     }
 
     modifier onlyOwner(){
-        require(msg.sender == owner, "Only owner can call this function");
+        if(onlyOwnerEnabled) require(msg.sender == owner, "Only owner can call this function");
         _;
     }
 
 
     event ProfileCreated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, uint256 minimumKarma, string profileMetadata);
     event ProfileUpdated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, uint256 minimumKarma, string profileMetadata);
-    event CallBooked(uint256 bookingId, uint256 bookerFarcasterId, uint256 profileFarcasterId, uint256 timeStart, uint256 timePeriod, uint256 amount);
+    event CallBooked(uint256 bookingId, uint256 bookerFarcasterId, uint256 profileFarcasterId, uint8 day, uint8 month, uint16 year, uint256 timeStartInSeconds, uint256 timePeriodInSeconds, uint256 amount);
     event CallCancelled(uint256 bookingId);
     event BookingPeriodLimitUpdated(uint256 bookingPeriodLimit);
 
@@ -138,7 +139,7 @@ contract CalCast{
     {
         if(_senderKarma < profiles[_profileFarcasterId].minimumKarma) revert InsufficientKarma(_senderFarcasterId, _profileFarcasterId, _senderKarma, profiles[_profileFarcasterId].minimumKarma);
         if(profiles[_profileFarcasterId].exists == false) revert ProfileDoesNotExist(_profileFarcasterId);
-        if(profiles[_senderFarcasterId].exists == false) revert ProfileDoesNotExist(_profileFarcasterId);
+        if(profiles[_senderFarcasterId].exists == false) revert ProfileDoesNotExist(_senderFarcasterId);
         if(profiles[_profileFarcasterId].timeSlots.length < _timeSlotId) revert TimeSlotDoesNotExist(_profileFarcasterId, _timeSlotId);
         if(profiles[_profileFarcasterId].timePeriods.length < _timePeriodId) revert TimePeriodDoesNotExist(_profileFarcasterId, _timePeriodId);
 
@@ -158,7 +159,7 @@ contract CalCast{
         if(msg.value < profiles[_profileFarcasterId].pricing[_timePeriodId]) revert InsufficientBookingFee(_profileFarcasterId, _timeSlot, profiles[_profileFarcasterId].pricing[_timePeriod], msg.value);
         bookings[_profileFarcasterId].push(Booking(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _timeSlot, _timePeriod, msg.value, _day, _month, _year, true));
         bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot] = BookingTimeCheck(_timeSlot, _timePeriod, true);
-        emit CallBooked(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _timeSlot, _timePeriod, msg.value);
+        emit CallBooked(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _day, _month, _year, _timeSlot, _timePeriod, msg.value);
         _bookingCounter++;
     }
 
@@ -168,6 +169,11 @@ contract CalCast{
         if(bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot].exists == false) revert BookingDoesNotExist(_bookingCounter);
         bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot].exists=false;
         emit CallCancelled(_bookingCounter);
+    }
+
+    function setOnlyOwner(bool _onlyOwnerEnabled) public onlyOwner
+    {
+        onlyOwnerEnabled = _onlyOwnerEnabled;
     }
 
     function totalProfiles() public view returns (uint256)
