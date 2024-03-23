@@ -5,9 +5,6 @@ type profile @entity {
   "the farcaster id of the user"
   farcasterId: BigInt!
 
-  "the address of the creator of this profile"
-  creatorAddress: Bytes!
-
   "the available time slots for the profile"
   timeSlots: [BigInt!]!
 
@@ -17,8 +14,8 @@ type profile @entity {
   "prices respective to the time periods chosen"
   prices: [BigInt!]!
 
-  "minimum karma required to book a call with this profile"
-  minimumKarma: BigInt!
+  "only people in engagement graph can book a call with this profile"
+  karmaGatingEnabled: Boolean!
 
   "the profile metadata of the user"
   metadata: String!

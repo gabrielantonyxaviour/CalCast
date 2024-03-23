@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@airstack/frames": "^1.0.20",
     "@coinbase/onchainkit": "0.11.0",
     "@privy-io/react-auth": "^1.59.5",
     "@radix-ui/react-avatar": "^1.0.4",

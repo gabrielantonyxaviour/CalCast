@@ -1,7 +1,17 @@
+/* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
 import { getNextSixDates } from "@/lib/date";
 import { createTimeSlots } from "@/lib/time";
+import {
+  FrameRatio,
+  generateCaptchaChallenge,
+  GenerateCaptchaChallengeInput,
+  GenerateCaptchaChallengeOutput,
+  validateCaptchaChallenge,
+  ValidateCaptchaChallengeInput,
+  ValidateCaptchaChallengeOutput,
+} from "@airstack/frames";
 
 const handleRequest = frames(async (ctx) => {
   const booking = ctx.searchParams;
@@ -16,7 +26,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -28,6 +39,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -40,7 +52,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -48,18 +60,24 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
                 }}
               >
-                Logo
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
           <div
@@ -67,29 +85,59 @@ const handleRequest = frames(async (ctx) => {
               color: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              marginTop: 50,
             }}
           >
             <div
               style={{
-                fontSize: 20,
-                marginBottom: 8,
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "flex-end",
               }}
             >
-              0xLeo
+              <div
+                style={{
+                  color: "white",
+                  fontSize: 60,
+                  marginBottom: 8,
+                }}
+              >
+                0xLeo
+              </div>
+              <hr
+                style={{
+                  borderColor: "white",
+                  width: 70,
+                  transform: "rotate(-65deg)",
+                  margin: 0,
+                  borderWidth: 1,
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 80,
+                    height: 80,
+                  }}
+                />
+              </div>
             </div>
-            <hr
-              style={{
-                width: "100%",
-                margin: 0,
-                borderWidth: 0.5,
-                borderColor: "white",
-              }}
-            />{" "}
             <div
               style={{
-                fontSize: 14,
+                fontSize: 30,
                 marginTop: 8,
+                alignSelf: "flex-end",
+                color: "gray",
               }}
             >
               Talks about Infrastructure and tooling
@@ -98,9 +146,12 @@ const handleRequest = frames(async (ctx) => {
           <div
             style={{
               color: "white",
+              alignSelf: "flex-start",
+              fontSize: 38,
+              marginTop: 10,
             }}
           >
-            Shedule a call ?
+            schedule a call for ?
           </div>
         </div>
       ),
@@ -128,7 +179,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -140,6 +192,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -152,7 +205,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -160,28 +213,50 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
+                  gap: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Logo
+                <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 68,
+                    height: 68,
+                  }}
+                />
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
 
           <div
             style={{
               color: "white",
-              display: "flex", // flex must be there or it throws error
+              display: "flex",
+              marginTop: 50,
+              fontSize: 36,
             }}
           >
-            Choose A date {d}
+            Choose a date
           </div>
           <div
             style={{
@@ -189,18 +264,19 @@ const handleRequest = frames(async (ctx) => {
               display: "flex",
               gap: 10,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
+              marginTop: 10,
             }}
           >
             {dates.map((date, index) => (
               <div
                 key={index}
                 style={{
-                  padding: 5,
-                  background: "linear-gradient(to right, #9B30FF, #7158FF)",
-
-                  border: index.toString() === d ? "2px solid white" : "none",
-                  borderRadius: 5,
+                  padding: 30,
+                  border: index.toString() === d ? "none" : "1px solid gray",
+                  borderRadius: 15,
+                  backgroundColor: index.toString() === d ? "white" : "none",
+                  color: index.toString() === d ? "black" : "white",
                 }}
               >
                 {date}
@@ -258,7 +334,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -270,6 +347,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -282,7 +360,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -290,28 +368,50 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
+                  gap: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Logo
+                <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 68,
+                    height: 68,
+                  }}
+                />
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
 
           <div
             style={{
               color: "white",
-              display: "flex", // flex must be there or it throws error
+              display: "flex",
+              marginTop: 50,
+              fontSize: 36,
             }}
           >
-            Choose A Time {t}
+            Choose a Time
           </div>
           {/* {visibleTimeSlots.map((timeSlot, index) => (
             <div key={index} style={{ color: "white" }}>
@@ -324,21 +424,20 @@ const handleRequest = frames(async (ctx) => {
               display: "flex",
               gap: 10,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
+              marginTop: 10,
             }}
           >
             {visibleTimeSlots.map((timeSlot, index) => (
               <div
                 key={index}
                 style={{
-                  fontSize: 14,
-                  padding: 5,
-                  background: "linear-gradient(to right, #9B30FF, #7158FF)",
-                  // backgroundColor: "gray",
-
-                  border:
-                    index === parseInt(t) % 4 ? "2px solid white" : "none",
-                  borderRadius: 5,
+                  fontSize: 30,
+                  padding: 15,
+                  backgroundColor: index === parseInt(t) % 4 ? "white" : "none",
+                  color: index === parseInt(t) % 4 ? "black" : "white",
+                  border: index === parseInt(t) % 4 ? "none" : "1px solid gray",
+                  borderRadius: 15,
                 }}
               >
                 {timeSlot}
@@ -378,7 +477,87 @@ const handleRequest = frames(async (ctx) => {
         </Button>,
       ],
     };
+  } else if (booking["captcha"] === undefined) {
+    const input: GenerateCaptchaChallengeInput = {
+      options: { ratio: FrameRatio._1_91__1, includeImage: true },
+    };
+
+    const res: GenerateCaptchaChallengeOutput = await generateCaptchaChallenge(
+      input
+    );
+
+    // console.log(res);
+    // ctx.message!.state = res.state;
+    // console.log("state");
+    // console.log(ctx.message?.state);
+
+    return {
+      image: (
+        <div style={{ display: "flex" }}>
+          <img src={res.image}></img>
+        </div>
+      ),
+      state: {
+        captchaId: res.state.captchaId,
+        valueHash: res.state.valueHash,
+      },
+      // image: res.image,
+      buttons: [
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&captchaId=${res.state.captchaId}&hashvalue=${res.state.valueHash}`}
+        >
+          Verify
+        </Button>,
+      ],
+      textInput: "Enter the answer",
+    };
+  } else if (booking["verified"] === undefined) {
+    const inputText = ctx.message?.inputText;
+    const states = ctx.message!.state;
+
+    const state = {
+      captchaId: booking["captchaId"],
+      valueHash: booking["hashvalue"],
+    };
+
+    console.log(`state : ${state}`);
+    const input: ValidateCaptchaChallengeInput = {
+      inputText,
+      state,
+    };
+
+    const res: ValidateCaptchaChallengeOutput = await validateCaptchaChallenge(
+      input
+    );
+
+    console.log(res);
+    return {
+      image: (
+        <div style={{ display: "flex" }}>
+          <img src={res.image}></img>
+        </div>
+      ),
+      // image: res.image,
+      buttons: [
+        <Button
+          action="post"
+          target={
+            res.isValidated
+              ? `/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&verified=true`
+              : `/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true`
+          }
+        >
+          {res.isValidated ? "Proceed" : "Try again!"}
+        </Button>,
+      ],
+    };
   } else {
+    const t = booking["t"].toString();
+    const d = booking["d"].toString();
+
+    const dur = booking["duration"].toString();
+
     return {
       image: (
         <div
@@ -386,7 +565,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -398,6 +578,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -410,7 +591,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -418,18 +599,24 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
                 }}
               >
-                Logo
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
           <div
@@ -437,29 +624,59 @@ const handleRequest = frames(async (ctx) => {
               color: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              marginTop: 60,
             }}
           >
             <div
               style={{
-                fontSize: 20,
-                marginBottom: 8,
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "flex-end",
               }}
             >
-              0xLeo
+              <div
+                style={{
+                  color: "white",
+                  fontSize: 60,
+                  marginBottom: 8,
+                }}
+              >
+                0xLeo
+              </div>
+              <hr
+                style={{
+                  borderColor: "white",
+                  width: 70,
+                  transform: "rotate(-65deg)",
+                  margin: 0,
+                  borderWidth: 1,
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 80,
+                    height: 80,
+                  }}
+                />
+              </div>
             </div>
-            <hr
-              style={{
-                width: "100%",
-                margin: 0,
-                borderWidth: 0.5,
-                borderColor: "white",
-              }}
-            />{" "}
             <div
               style={{
-                fontSize: 14,
+                fontSize: 30,
                 marginTop: 8,
+                alignSelf: "flex-end",
+                color: "gray",
               }}
             >
               Talks about Infrastructure and tooling
@@ -468,20 +685,25 @@ const handleRequest = frames(async (ctx) => {
           <div
             style={{
               color: "white",
+              fontSize: 32,
+              marginTop: 20,
             }}
           >
-            Shedule a call ?
+            You have a scheduled call with 0xLeo on the 24th from 6:30 to 7:00.
+            Are you sure ?
           </div>
         </div>
       ),
       buttons: [
-        <Button action="post" target="/bookings?duration=30">
-          30min
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}`}
+        >
+          back
         </Button>,
-        <Button action="post" target="/bookings?duration=15">
-          15min
+        <Button action="tx" target="/txdata" post_url="/bookings">
+          Book for 0.05 ETH
         </Button>,
-        <Button action="post_redirect">Create shedule</Button>,
       ],
     };
   }

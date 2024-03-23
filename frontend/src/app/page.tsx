@@ -12,7 +12,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "Scheduling infrastructure for the new social.",
     other: {
       ...(await fetchMetadata(
-        new URL("/frames", process.env.HOST || "http://localhost:3000")
+        new URL(
+          "/frames",
+          "https://calcast.vercel.app" || "http://localhost:3000"
+        )
       )),
     },
   };
