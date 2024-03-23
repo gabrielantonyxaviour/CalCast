@@ -1,6 +1,7 @@
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
 import { getNextSixDates } from "@/lib/date";
+import { createTimeSlots } from "@/lib/time";
 
 const handleRequest = frames(async (ctx) => {
   const booking = ctx.searchParams;
@@ -231,6 +232,147 @@ const handleRequest = frames(async (ctx) => {
         <Button
           action="post"
           target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true`}
+        >
+          Confirm ✅
+        </Button>,
+      ],
+    };
+  } else if (booking["timefixed"] === undefined) {
+    if (booking["t"] === undefined) {
+      booking["t"] = "0";
+    }
+    const t = booking["t"].toString();
+    console.log(t);
+    const timeslots = createTimeSlots("06:00", "13:00");
+    console.log(timeslots);
+    const visibleIndex = Math.floor(parseInt(t) / 4);
+
+    const startIndex = visibleIndex * 4;
+    const endIndex = Math.min(startIndex + 4, timeslots.length);
+    const visibleTimeSlots = timeslots.slice(startIndex, endIndex);
+
+    return {
+      image: (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+            justifyContent: "center",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "black",
+            padding: 50,
+            fontSize: 24,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  color: "white",
+                  fontSize: 48,
+                }}
+              >
+                CalCast
+              </div>
+              <div
+                style={{
+                  color: "white",
+                }}
+              >
+                Logo
+              </div>
+            </div>
+            <div
+              style={{
+                color: "gray",
+                fontSize: 20,
+              }}
+            >
+              Sheduling Infrastructure for Farcaster
+            </div>
+          </div>
+
+          <div
+            style={{
+              color: "white",
+              display: "flex", // flex must be there or it throws error
+            }}
+          >
+            Choose A Time {t}
+          </div>
+          {/* {visibleTimeSlots.map((timeSlot, index) => (
+            <div key={index} style={{ color: "white" }}>
+              {timeSlot}
+            </div>
+          ))} */}
+          <div
+            style={{
+              color: "white",
+              display: "flex",
+              gap: 10,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {visibleTimeSlots.map((timeSlot, index) => (
+              <div
+                key={index}
+                style={{
+                  fontSize: 14,
+                  padding: 5,
+                  background: "linear-gradient(to right, #9B30FF, #7158FF)",
+                  // backgroundColor: "gray",
+
+                  border:
+                    index === parseInt(t) % 4 ? "2px solid white" : "none",
+                  borderRadius: 5,
+                }}
+              >
+                {timeSlot}
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+      buttons: [
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}`}
+        >
+          back
+        </Button>,
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${
+            booking["d"]
+          }&datefixed=true&t=${parseInt(booking["t"].toString()) - 1}`}
+        >
+          ⬅️
+        </Button>,
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${
+            booking["d"]
+          }&datefixed=true&t=${parseInt(booking["t"].toString()) + 1}`}
+        >
+          ➡️
+        </Button>,
+        <Button
+          action="post"
+          target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true`}
         >
           Confirm ✅
         </Button>,
