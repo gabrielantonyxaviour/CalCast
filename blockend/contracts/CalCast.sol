@@ -146,9 +146,9 @@ contract CalCast{
         uint256 _timePeriod=profiles[_profileFarcasterId].timePeriods[_timePeriodId];
         bytes32 _dayHash=keccak256(abi.encodePacked(_day, _month, _year));
 
-        for(uint256 i=15 minutes; i<= 1 hours; i+=15 minutes)
+        for(uint256 i=15 minutes; i<= bookingPeriodLimit; i+=15 minutes)
         {   
-            if(_timeSlot<i) revert TimeSlotInvalid(_profileFarcasterId, _timeSlot, 1 hours);
+            if(_timeSlot<i) revert TimeSlotInvalid(_profileFarcasterId, _timeSlot, bookingPeriodLimit);
             BookingTimeCheck memory _prevBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot-i];
             if(_prevBookingTimeCheck.exists && _prevBookingTimeCheck.timePeriod>i) revert TimeSlotUnavailable(_profileFarcasterId, _timeSlot);
             BookingTimeCheck memory _afterBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot+i];
