@@ -34,6 +34,9 @@ contract CalCast{
         uint256 timeStart;
         uint256 timePeriod;
         uint256 amount;
+        uint8 day;
+        uint8 month;
+        uint16 year; 
         bool exists;
     }
 
@@ -43,11 +46,13 @@ contract CalCast{
         bool exists;
     }
 
+    
+
     uint256 public _bookingCounter;
     uint256 public _profileCounter;
     mapping(uint256 => Profile) public profiles;
     mapping(uint256 => Booking[]) public bookings;
-    mapping(uint256=> mapping(uint256 => BookingTimeCheck)) public bookingTimeCheck;
+    mapping(uint256 => mapping(bytes32 => mapping(uint256 => BookingTimeCheck))) public bookingTimeCheck;
     uint256 public bookingPeriodLimit= 1 hours;
     address public owner;
 
@@ -129,7 +134,7 @@ contract CalCast{
         emit BookingPeriodLimitUpdated(_bookingPeriodLimit);
     }
 
-    function bookCall(uint256 _senderFarcasterId,uint256 _senderKarma, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId) public payable onlyOwner
+    function bookCall(uint256 _senderFarcasterId, uint256 _senderKarma, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId, uint8 _day, uint8 _month, uint16 _year) public payable onlyOwner
     {
         if(_senderKarma < profiles[_profileFarcasterId].minimumKarma) revert InsufficientKarma(_senderFarcasterId, _profileFarcasterId, _senderKarma, profiles[_profileFarcasterId].minimumKarma);
         if(profiles[_profileFarcasterId].exists == false) revert ProfileDoesNotExist(_profileFarcasterId);
@@ -139,27 +144,29 @@ contract CalCast{
 
         uint256 _timeSlot=profiles[_profileFarcasterId].timeSlots[_timeSlotId];
         uint256 _timePeriod=profiles[_profileFarcasterId].timePeriods[_timePeriodId];
+        bytes32 _dayHash=keccak256(abi.encodePacked(_day, _month, _year));
 
         for(uint256 i=15 minutes; i<= 1 hours; i+=15 minutes)
         {   
             if(_timeSlot<i) revert TimeSlotInvalid(_profileFarcasterId, _timeSlot, 1 hours);
-            BookingTimeCheck memory _prevBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_timeSlot-i];
+            BookingTimeCheck memory _prevBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot-i];
             if(_prevBookingTimeCheck.exists && _prevBookingTimeCheck.timePeriod>i) revert TimeSlotUnavailable(_profileFarcasterId, _timeSlot);
-            BookingTimeCheck memory _afterBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_timeSlot+i];
+            BookingTimeCheck memory _afterBookingTimeCheck=bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot+i];
             if(_timePeriod>i && _afterBookingTimeCheck.exists) revert TimeSlotUnavailable(_profileFarcasterId, _timeSlot);
         }
 
         if(msg.value < profiles[_profileFarcasterId].pricing[_timePeriodId]) revert InsufficientBookingFee(_profileFarcasterId, _timeSlot, profiles[_profileFarcasterId].pricing[_timePeriod], msg.value);
-        bookings[_profileFarcasterId].push(Booking(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _timeSlot, _timePeriod, msg.value, true));
-        bookingTimeCheck[_profileFarcasterId][_timeSlot] = BookingTimeCheck(_timeSlot, _timePeriod, true);
+        bookings[_profileFarcasterId].push(Booking(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _timeSlot, _timePeriod, msg.value, _day, _month, _year, true));
+        bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot] = BookingTimeCheck(_timeSlot, _timePeriod, true);
         emit CallBooked(_bookingCounter, _senderFarcasterId, _profileFarcasterId, _timeSlot, _timePeriod, msg.value);
         _bookingCounter++;
     }
 
-    function cancelCall(uint256 _profileFarcasterId, uint256 _timeSlot) public onlyOwner
+    function cancelCall(uint256 _profileFarcasterId, uint256 _timeSlot, uint8 _day, uint8 _month, uint16 _year) public onlyOwner
     {
-        if(bookingTimeCheck[_profileFarcasterId][_timeSlot].exists == false) revert BookingDoesNotExist(_bookingCounter);
-        bookingTimeCheck[_profileFarcasterId][_timeSlot].exists=false;
+        bytes32 _dayHash=keccak256(abi.encodePacked(_day, _month, _year));
+        if(bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot].exists == false) revert BookingDoesNotExist(_bookingCounter);
+        bookingTimeCheck[_profileFarcasterId][_dayHash][_timeSlot].exists=false;
         emit CallCancelled(_bookingCounter);
     }
 
