@@ -11,7 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "Scheduling infrastructure for the new social.",
     other: {
       ...(await fetchMetadata(
-        new URL("/frames", process.env.HOST || "http://localhost:3000")
+        new URL(
+          "/frames",
+          process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
+        )
       )),
     },
   };
