@@ -1,0 +1,451 @@
+export const storageRegistryABI = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    inputs: [{ internalType: "uint256", name: "bookingId", type: "uint256" }],
+    name: "BookingDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timeSlot", type: "uint256" },
+      { internalType: "uint256", name: "bookingFee", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "InsufficientBookingFee",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "farcasterId", type: "uint256" }],
+    name: "ProfileAlreadyExists",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "farcasterId", type: "uint256" }],
+    name: "ProfileDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timePeriod", type: "uint256" },
+    ],
+    name: "TimePeriodDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timeSlot", type: "uint256" },
+    ],
+    name: "TimeSlotDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timeSlot", type: "uint256" },
+      { internalType: "uint256", name: "timePeriod", type: "uint256" },
+    ],
+    name: "TimeSlotInvalid",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timeSlot", type: "uint256" },
+    ],
+    name: "TimeSlotUnavailable",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bookingPeriodLimit",
+        type: "uint256",
+      },
+    ],
+    name: "BookingPeriodLimitUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bookingId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bookerFarcasterId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "profileFarcasterId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timeStart",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timePeriod",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "CallBooked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bookingId",
+        type: "uint256",
+      },
+    ],
+    name: "CallCancelled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "farcasterId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "timeSlots",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "timePeriods",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "pricing",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "profileMetadata",
+        type: "string",
+      },
+    ],
+    name: "ProfileCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "farcasterId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "timeSlots",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "timePeriods",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "pricing",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "profileMetadata",
+        type: "string",
+      },
+    ],
+    name: "ProfileUpdated",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "_bookingCounter",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "_profileCounter",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_senderFarcasterId", type: "uint256" },
+      { internalType: "uint256", name: "_profileFarcasterId", type: "uint256" },
+      { internalType: "uint256", name: "_timeSlotId", type: "uint256" },
+      { internalType: "uint256", name: "_timePeriodId", type: "uint256" },
+    ],
+    name: "bookCall",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+    ],
+    name: "bookingCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "bookingPeriodLimit",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "bookingTimeCheck",
+    outputs: [
+      { internalType: "uint256", name: "timeStart", type: "uint256" },
+      { internalType: "uint256", name: "timePeriod", type: "uint256" },
+      { internalType: "bool", name: "exists", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "bookings",
+    outputs: [
+      { internalType: "uint256", name: "bookingId", type: "uint256" },
+      { internalType: "uint256", name: "bookerFarcasterId", type: "uint256" },
+      { internalType: "uint256", name: "profileFarcasterId", type: "uint256" },
+      { internalType: "uint256", name: "timeStart", type: "uint256" },
+      { internalType: "uint256", name: "timePeriod", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "bool", name: "exists", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_profileFarcasterId", type: "uint256" },
+      { internalType: "uint256", name: "_timeSlot", type: "uint256" },
+      { internalType: "uint256", name: "_timePeriod", type: "uint256" },
+    ],
+    name: "cancelCall",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "uint256[]", name: "_timeSlots", type: "uint256[]" },
+      { internalType: "uint256[]", name: "_timePeriods", type: "uint256[]" },
+      { internalType: "uint256[]", name: "_pricing", type: "uint256[]" },
+      { internalType: "string", name: "_profileMetadata", type: "string" },
+    ],
+    name: "createProfile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+    ],
+    name: "getAllBookigs",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "bookingId", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "bookerFarcasterId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "profileFarcasterId",
+            type: "uint256",
+          },
+          { internalType: "uint256", name: "timeStart", type: "uint256" },
+          { internalType: "uint256", name: "timePeriod", type: "uint256" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "bool", name: "exists", type: "bool" },
+        ],
+        internalType: "struct CalCast.Booking[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+    ],
+    name: "getProfile",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "farcasterId", type: "uint256" },
+          { internalType: "uint256[]", name: "timeSlots", type: "uint256[]" },
+          { internalType: "uint256[]", name: "timePeriods", type: "uint256[]" },
+          { internalType: "uint256[]", name: "pricing", type: "uint256[]" },
+          { internalType: "string", name: "profileMetadata", type: "string" },
+          { internalType: "bool", name: "exists", type: "bool" },
+        ],
+        internalType: "struct CalCast.Profile",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "profiles",
+    outputs: [
+      { internalType: "uint256", name: "farcasterId", type: "uint256" },
+      { internalType: "string", name: "profileMetadata", type: "string" },
+      { internalType: "bool", name: "exists", type: "bool" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalBookings",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalProfiles",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_bookingPeriodLimit", type: "uint256" },
+    ],
+    name: "updateBookingPeriodLimit",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "uint256[]", name: "_pricing", type: "uint256[]" },
+    ],
+    name: "updatePricing",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "uint256[]", name: "_timeSlots", type: "uint256[]" },
+      { internalType: "uint256[]", name: "_timePeriods", type: "uint256[]" },
+      { internalType: "uint256[]", name: "_pricing", type: "uint256[]" },
+      { internalType: "string", name: "_profileMetadata", type: "string" },
+    ],
+    name: "updateProfile",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "string", name: "_profileMetadata", type: "string" },
+    ],
+    name: "updateProfileMetadata",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "uint256[]", name: "timePeriods", type: "uint256[]" },
+    ],
+    name: "updateProfileTimePeriods",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_farcasterId", type: "uint256" },
+      { internalType: "uint256[]", name: "_timeSlots", type: "uint256[]" },
+    ],
+    name: "updateProfileTimeSlots",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
