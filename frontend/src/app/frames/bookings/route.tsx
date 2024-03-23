@@ -556,7 +556,7 @@ const handleRequest = frames(async (ctx) => {
       textInput: "Enter the answer",
     };
   } else if (booking["verified"] === undefined) {
-    const inputText = ctx.message?.inputText;
+    const inputText = ctx.message!.inputText || "";
     const states = ctx.message!.state;
 
     const state = {
@@ -565,6 +565,7 @@ const handleRequest = frames(async (ctx) => {
     };
 
     console.log(`state : ${state}`);
+
     const input: ValidateCaptchaChallengeInput = {
       inputText,
       state,
