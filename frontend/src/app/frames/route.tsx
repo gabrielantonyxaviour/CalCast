@@ -310,7 +310,7 @@ const handleRequest = frames(async (ctx) => {
         <Button action="post" target="/bookings">
           Analytics
         </Button>,
-        <Button action="post_redirect" target="https://calcast.vercel.app">
+        <Button action="link" target="https://calcast.vercel.app">
           Go to app
         </Button>,
       ],

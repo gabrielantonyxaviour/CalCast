@@ -163,7 +163,9 @@ const handleRequest = frames(async (ctx) => {
         <Button action="post" target="/bookings?duration=15">
           15min
         </Button>,
-        <Button action="post_redirect">Create shedule</Button>,
+        <Button action="link" target="https://calcast.vercel.app">
+          Create shedule
+        </Button>,
       ],
     };
   } else if (booking["datefixed"] === undefined) {
