@@ -68,6 +68,7 @@ contract CalCast{
 
     event ProfileCreated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, string profileMetadata, bool karmaGatingEnabled);
     event ProfileUpdated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, string profileMetadata, bool karmaGatingEnabled);
+    event ProfileDeleted(uint256 farcasterId);
     event CallBooked(uint256 bookingId, uint256 bookerFarcasterId, uint256 profileFarcasterId, uint8 day, uint8 month, uint16 year, uint256 timeStartInSeconds, uint256 timePeriodInSeconds, uint256 amount);
     event CallCancelled(uint256 bookingId);
     event BookingPeriodLimitUpdated(uint256 bookingPeriodLimit);
@@ -133,6 +134,13 @@ contract CalCast{
     {
         bookingPeriodLimit = _bookingPeriodLimit;
         emit BookingPeriodLimitUpdated(_bookingPeriodLimit);
+    }
+
+    function deleteProfile(uint256 _farcasterId) public onlyOwner
+    {
+        if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
+        profiles[_farcasterId].exists=false;
+        emit ProfileDeleted(_farcasterId);
     }
 
     function bookCall(uint256 _senderFarcasterId, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId, uint8 _day, uint8 _month, uint16 _year) public payable onlyOwner
