@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ...(await fetchMetadata(
         new URL(
           "/frames",
-          process.env.NEXT_PUBLIC_URL || "http://localhost:3000"
+          "https://calcast.vercel.app" || "http://localhost:3000"
         )
       )),
     },

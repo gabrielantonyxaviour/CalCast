@@ -64,7 +64,7 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="http://localhost:3000/calendar.png"
+                  src="https://calcast.vercel.app/calendar.png"
                   width={64}
                   height={64}
                 ></img>
@@ -129,7 +129,7 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="http://localhost:3000/calendar.png" // Replace 'circular_image_url.jpg' with the URL of your circular image
+                  src="https://calcast.vercel.app/calendar.png" // Replace 'circular_image_url.jpg' with the URL of your circular image
                   alt="Circular Image"
                   style={{
                     borderRadius: "50%", // Make the image circular
