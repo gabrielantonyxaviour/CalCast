@@ -689,8 +689,8 @@ const handleRequest = frames(async (ctx) => {
               marginTop: 20,
             }}
           >
-            You have a scheduled call with 0xLeo on the 24th from 6:30 to 7:00.
-            Are you sure ?
+            You are about to book a call on 24th at 6:30pm. Book now, to
+            confirm.
           </div>
         </div>
       ),
