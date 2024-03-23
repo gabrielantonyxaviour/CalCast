@@ -5,7 +5,7 @@ import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
 const inter = Inter({ subsets: ["latin"] });
-``;
+
 export const metadata: Metadata = {
   title: "Some App",
   description: "This app does something",

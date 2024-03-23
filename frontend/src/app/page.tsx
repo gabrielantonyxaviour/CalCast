@@ -4,6 +4,7 @@ import CreateSlot from "@/components/CreateSlot";
 import Analytics from "@/components/Analytics";
 import type { Metadata } from "next";
 import { fetchMetadata } from "frames.js/next";
+import Profile from "@/components/Profile";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -20,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   return (
     <BaseLayout pageTitle="Dashboard">
+      <Profile farcasterId="1" />
       <Analytics />
       <CreateSlot />
     </BaseLayout>
