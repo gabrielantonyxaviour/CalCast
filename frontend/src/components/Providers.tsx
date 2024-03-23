@@ -17,6 +17,8 @@ import {
   arbitrumSepolia,
 } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { PrivyProvider } from "@privy-io/react-auth";
+
 const queryClient = new QueryClient();
 
 const config = getDefaultConfig({
@@ -56,7 +58,24 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <PrivyProvider
+              appId="clu0wgkyq0hbgb53ga3bzdkib"
+              config={{
+                // Customize Privy's appearance in your app
+                appearance: {
+                  theme: "#000000",
+                  accentColor: "#676FFF",
+                  logo: "https://i.ibb.co/g9r44Vm/image-removebg-preview-7.png",
+                },
+                loginMethods: ["farcaster"],
+                // // Create embedded wallets for users who don't have a wallet
+                // embeddedWallets: {
+                //   createOnLogin: 'users-without-wallets',
+                // },
+              }}
+            >
+              {children}
+            </PrivyProvider>
           </ThemeProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
