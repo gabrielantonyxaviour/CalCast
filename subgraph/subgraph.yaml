@@ -6,9 +6,9 @@ dataSources:
     name: CalCast
     network: base-sepolia
     source:
-      address: "0x0A357b526Be3002d4fBBA5BC05444E92Fbc6A760"
+      address: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4"
       abi: CalCast
-      startBlock: 7709506
+      startBlock: 7715704
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -19,6 +19,7 @@ dataSources:
         - CallCancelled
         - ProfileCreated
         - ProfileUpdated
+        - ProfileDeleted
       abis:
         - name: CalCast
           file: ./abis/CalCast.json
@@ -29,8 +30,10 @@ dataSources:
           handler: handleCallBooked
         - event: CallCancelled(uint256)
           handler: handleCallCancelled
-        - event: ProfileCreated(uint256,uint256[],uint256[],uint256[],uint256,string)
+        - event: ProfileCreated(uint256,uint256[],uint256[],uint256[],string,bool)
           handler: handleProfileCreated
-        - event: ProfileUpdated(uint256,uint256[],uint256[],uint256[],uint256,string)
+        - event: ProfileUpdated(uint256,uint256[],uint256[],uint256[],string,bool)
           handler: handleProfileUpdated
+        - event: ProfileDeleted(uint256)
+          handler: handleProfileDeleted
       file: ./src/cal-cast.ts

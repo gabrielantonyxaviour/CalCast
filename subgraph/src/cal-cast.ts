@@ -5,6 +5,7 @@ import {
   CallCancelled as CallCancelledEvent,
   ProfileCreated as ProfileCreatedEvent,
   ProfileUpdated as ProfileUpdatedEvent,
+  ProfileDeleted as ProfileDeletedEvent,
 } from "../generated/CalCast/CalCast";
 import { booking as Booking, profile as Profile } from "../generated/schema";
 
@@ -58,11 +59,10 @@ export function handleProfileCreated(event: ProfileCreatedEvent): void {
   let entity = new Profile(event.params.farcasterId.toHexString());
 
   entity.farcasterId = event.params.farcasterId;
-  entity.creatorAddress = event.transaction.from;
   entity.timeSlots = event.params.timeSlots;
   entity.timePeriods = event.params.timePeriods;
   entity.prices = event.params.pricing;
-  entity.minimumKarma = event.params.minimumKarma;
+  entity.karmaGatingEnabled = event.params.karmaGatingEnabled;
   entity.metadata = event.params.profileMetadata;
   entity.transactionHash = event.transaction.hash;
   entity.totalBookings = BigInt.fromI32(0);
@@ -78,8 +78,12 @@ export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
     entity.timeSlots = event.params.timeSlots;
     entity.timePeriods = event.params.timePeriods;
     entity.prices = event.params.pricing;
-    entity.minimumKarma = event.params.minimumKarma;
+    entity.karmaGatingEnabled = event.params.karmaGatingEnabled;
     entity.metadata = event.params.profileMetadata;
     entity.save();
   }
+}
+
+export function handleProfileDeleted(event: ProfileDeletedEvent): void {
+  store.remove("Profile", event.params.farcasterId.toHexString());
 }
