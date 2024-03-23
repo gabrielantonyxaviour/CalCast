@@ -24,13 +24,11 @@ Farcaster has become the social media hub of web3 where people post/interact and
 
 ## Important Links
 
-Application =>
+Application => https://cal-cast.vercel.app/
 
 Pitch Deck =>
 
-Demo Video =>
-
-ETHGlboal Dashboard =>
+ETHGlboal Dashboard => https://ethglobal.com/showcase/calcast-7g042
 
 <h4>Made with 💜 by <a href="https://x.com/fabianferno" target="_blank">@fabianferno</a> <a href="https://x.com/gabrielaxy" target="_blank">@gabrielaxy</a> <a href="https://x.com/LeoFranklin_15" target="_blank">@LeoFranklin_15</a>
 <h4>
