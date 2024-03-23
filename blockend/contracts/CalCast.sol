@@ -9,7 +9,6 @@ error InvalidTimeSlot(uint256 _profileFarcasterId, uint256 _timeSlot, uint256 _t
 error TimeSlotDoesNotExist(uint256 farcasterId, uint256 timeSlot);
 error InvalidTimePeriod(uint256 _profileFarcasterId, uint256 _timePeriod, uint256 _totalTimePeriodLength);
 error TimePeriodDoesNotExist(uint256 farcasterId, uint256 timePeriod);
-error InsufficientKarma(uint256 _senderFarcasterId, uint256 _profileFarcasterId, uint256 _senderKarma, uint256 _profileKarma);
 error TimeSlotUnavailable(uint256 farcasterId, uint256 timeSlot);
 error SlotAlreadyBooked(uint256 profileFarcasterId, uint256 timeStart, uint256 timePeriod);
 error TimeSlotInvalid(uint256 farcasterId, uint256 timeSlot, uint256 timePeriod);
@@ -22,8 +21,8 @@ contract CalCast{
         uint256[] timeSlots;
         uint256[] timePeriods;  
         uint256[] pricing;
-        uint256 minimumKarma;
         string profileMetadata;
+        bool karmaGatingEnabled;
         bool exists;
     }
 
@@ -67,28 +66,29 @@ contract CalCast{
     }
 
 
-    event ProfileCreated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, uint256 minimumKarma, string profileMetadata);
-    event ProfileUpdated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, uint256 minimumKarma, string profileMetadata);
+    event ProfileCreated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, string profileMetadata, bool karmaGatingEnabled);
+    event ProfileUpdated(uint256 farcasterId, uint256[] timeSlots, uint256[] timePeriods, uint256[] pricing, string profileMetadata, bool karmaGatingEnabled);
     event CallBooked(uint256 bookingId, uint256 bookerFarcasterId, uint256 profileFarcasterId, uint8 day, uint8 month, uint16 year, uint256 timeStartInSeconds, uint256 timePeriodInSeconds, uint256 amount);
     event CallCancelled(uint256 bookingId);
     event BookingPeriodLimitUpdated(uint256 bookingPeriodLimit);
 
-    function createProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing, uint256 _minimumKarma,  string memory _profileMetadata) public onlyOwner
+    function createProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing, bool _karmaGatingEnabled,  string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == true) revert ProfileAlreadyExists(_farcasterId);
-        profiles[_farcasterId] = Profile(_farcasterId, _timeSlots, _timePeriods, _pricing,_minimumKarma,   _profileMetadata, true);
-        emit ProfileCreated(_farcasterId, _timeSlots, _timePeriods, _pricing,_minimumKarma,  _profileMetadata);
+        profiles[_farcasterId] = Profile(_farcasterId, _timeSlots, _timePeriods, _pricing, _profileMetadata, _karmaGatingEnabled, true);
+        emit ProfileCreated(_farcasterId, _timeSlots, _timePeriods, _pricing, _profileMetadata, _karmaGatingEnabled);
         _profileCounter++;
     }
 
-    function updateProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing,uint256 _minimumKarma, string memory _profileMetadata) public onlyOwner
+    function updateProfile(uint256 _farcasterId, uint256[] memory _timeSlots, uint256[] memory _timePeriods, uint256[] memory _pricing, bool _karmaGatingEnabled, string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timeSlots = _timeSlots;
         profiles[_farcasterId].timePeriods = _timePeriods;
         profiles[_farcasterId].pricing = _pricing;
+        profiles[_farcasterId].karmaGatingEnabled = _karmaGatingEnabled;
         profiles[_farcasterId].profileMetadata = _profileMetadata;
-        emit ProfileUpdated(_farcasterId, _timeSlots, _timePeriods, _pricing,_minimumKarma, _profileMetadata);
+        emit ProfileUpdated(_farcasterId, _timeSlots, _timePeriods, _pricing, _profileMetadata, _karmaGatingEnabled);
     }
     
 
@@ -96,14 +96,14 @@ contract CalCast{
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].pricing = _pricing;
-        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, _pricing, profiles[_farcasterId].minimumKarma, profiles[_farcasterId].profileMetadata);
+        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, _pricing, profiles[_farcasterId].profileMetadata, profiles[_farcasterId].karmaGatingEnabled);
     }   
 
     function updateProfileTimeSlots(uint256 _farcasterId, uint256[] memory _timeSlots) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timeSlots = _timeSlots;
-        emit ProfileUpdated(_farcasterId, _timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing,profiles[_farcasterId].minimumKarma, profiles[_farcasterId].profileMetadata);
+        emit ProfileUpdated(_farcasterId, _timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing, profiles[_farcasterId].profileMetadata, profiles[_farcasterId].karmaGatingEnabled);
 
     }
 
@@ -111,21 +111,21 @@ contract CalCast{
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].timePeriods = timePeriods;
-        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, timePeriods, profiles[_farcasterId].pricing,profiles[_farcasterId].minimumKarma, profiles[_farcasterId].profileMetadata);
+        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, timePeriods, profiles[_farcasterId].pricing, profiles[_farcasterId].profileMetadata, profiles[_farcasterId].karmaGatingEnabled);
     }
 
-    function updateMinimumKarma(uint256 _farcasterId, uint256 _minimumKarma) public onlyOwner
+    function updateKarmaGating(uint256 _farcasterId, bool _karmaGatingEnabled) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
-        profiles[_farcasterId].minimumKarma = _minimumKarma;
-        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing, _minimumKarma, profiles[_farcasterId].profileMetadata);
+        profiles[_farcasterId].karmaGatingEnabled = _karmaGatingEnabled;
+        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing, profiles[_farcasterId].profileMetadata, _karmaGatingEnabled);
     }
 
     function updateProfileMetadata(uint256 _farcasterId, string memory _profileMetadata) public onlyOwner
     {
         if(profiles[_farcasterId].exists == false) revert ProfileDoesNotExist(_farcasterId);
         profiles[_farcasterId].profileMetadata = _profileMetadata;
-        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing,profiles[_farcasterId].minimumKarma, _profileMetadata);
+        emit ProfileUpdated(_farcasterId, profiles[_farcasterId].timeSlots, profiles[_farcasterId].timePeriods, profiles[_farcasterId].pricing, _profileMetadata, profiles[_farcasterId].karmaGatingEnabled);
     }
 
 
@@ -135,9 +135,8 @@ contract CalCast{
         emit BookingPeriodLimitUpdated(_bookingPeriodLimit);
     }
 
-    function bookCall(uint256 _senderFarcasterId, uint256 _senderKarma, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId, uint8 _day, uint8 _month, uint16 _year) public payable onlyOwner
+    function bookCall(uint256 _senderFarcasterId, uint256 _profileFarcasterId, uint256 _timeSlotId, uint256 _timePeriodId, uint8 _day, uint8 _month, uint16 _year) public payable onlyOwner
     {
-        if(_senderKarma < profiles[_profileFarcasterId].minimumKarma) revert InsufficientKarma(_senderFarcasterId, _profileFarcasterId, _senderKarma, profiles[_profileFarcasterId].minimumKarma);
         if(profiles[_profileFarcasterId].exists == false) revert ProfileDoesNotExist(_profileFarcasterId);
         if(profiles[_senderFarcasterId].exists == false) revert ProfileDoesNotExist(_senderFarcasterId);
         if(profiles[_profileFarcasterId].timeSlots.length < _timeSlotId) revert TimeSlotDoesNotExist(_profileFarcasterId, _timeSlotId);
