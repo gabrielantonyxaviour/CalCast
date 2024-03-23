@@ -1,57 +1,72 @@
-type BookingPeriodLimitUpdated @entity(immutable: true) {
-  id: Bytes!
-  bookingPeriodLimit: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
+type profile @entity {
+  "the id of the profile, farcaster id"
+  id: ID!
+
+  "the farcaster id of the user"
+  farcasterId: BigInt!
+
+  "the address of the creator of this profile"
+  creatorAddress: Bytes!
+
+  "the available time slots for the profile"
+  timeSlots: [BigInt!]!
+
+  "the selected time period options for booking calls"
+  timePeriods: [BigInt!]!
+
+  "prices respective to the time periods chosen"
+  prices: [BigInt!]!
+
+  "minimum karma required to book a call with this profile"
+  minimumKarma: BigInt!
+
+  "the profile metadata of the user"
+  metadata: String!
+
+  "the total bookings of this profile"
+  totalBookings: BigInt!
+
+  "the total earnings of this profile"
+  totalEarnings: BigInt!
+
+  "all bookings received by this user"
+  receivedBookings: [booking!]! @derivedFrom(field: "receiver")
+
+  "all bookings sent by this user"
+  sentBookings: [booking!]! @derivedFrom(field: "booker")
+
+  "the transaction hash in which the user profile was created"
   transactionHash: Bytes!
 }
 
-type CallBooked @entity(immutable: true) {
-  id: Bytes!
-  bookingId: BigInt! # uint256
-  bookerFarcasterId: BigInt! # uint256
-  profileFarcasterId: BigInt! # uint256
-  day: Int! # uint8
-  month: Int! # uint8
-  year: Int! # uint16
-  timeStartInSeconds: BigInt! # uint256
-  timePeriodInSeconds: BigInt! # uint256
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
+type booking @entity {
+  "the booking id emitted by the event"
+  id: ID!
 
-type CallCancelled @entity(immutable: true) {
-  id: Bytes!
-  bookingId: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
+  "the profile of the booker"
+  booker: profile!
 
-type ProfileCreated @entity(immutable: true) {
-  id: Bytes!
-  farcasterId: BigInt! # uint256
-  timeSlots: [BigInt!]! # uint256[]
-  timePeriods: [BigInt!]! # uint256[]
-  pricing: [BigInt!]! # uint256[]
-  minimumKarma: BigInt! # uint256
-  profileMetadata: String! # string
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
+  "the profile of the receiver of the booking"
+  receiver: profile!
 
-type ProfileUpdated @entity(immutable: true) {
-  id: Bytes!
-  farcasterId: BigInt! # uint256
-  timeSlots: [BigInt!]! # uint256[]
-  timePeriods: [BigInt!]! # uint256[]
-  pricing: [BigInt!]! # uint256[]
-  minimumKarma: BigInt! # uint256
-  profileMetadata: String! # string
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
+  "the day of the booking"
+  day: BigInt!
+
+  "the month of the booking"
+  month: BigInt!
+
+  "the year of the booking"
+  year: BigInt!
+
+  "start time of the booking in seconds"
+  timeStartInSeconds: BigInt!
+
+  "the duration of the booking in seconds"
+  timePeriodInSeconds: BigInt!
+
+  "the amount paid for the booking"
+  receiverRevenue: BigInt!
+
+  "the transaction hash in which the booking was created"
   transactionHash: Bytes!
 }

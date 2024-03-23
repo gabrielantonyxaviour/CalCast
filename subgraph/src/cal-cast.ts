@@ -1,99 +1,61 @@
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   BookingPeriodLimitUpdated as BookingPeriodLimitUpdatedEvent,
   CallBooked as CallBookedEvent,
   CallCancelled as CallCancelledEvent,
   ProfileCreated as ProfileCreatedEvent,
-  ProfileUpdated as ProfileUpdatedEvent
-} from "../generated/CalCast/CalCast"
-import {
-  BookingPeriodLimitUpdated,
-  CallBooked,
-  CallCancelled,
-  ProfileCreated,
-  ProfileUpdated
-} from "../generated/schema"
+  ProfileUpdated as ProfileUpdatedEvent,
+} from "../generated/CalCast/CalCast";
+import { booking as Booking, profile as Profile } from "../generated/schema";
 
 export function handleBookingPeriodLimitUpdated(
   event: BookingPeriodLimitUpdatedEvent
-): void {
-  let entity = new BookingPeriodLimitUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.bookingPeriodLimit = event.params.bookingPeriodLimit
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
+): void {}
 
 export function handleCallBooked(event: CallBookedEvent): void {
-  let entity = new CallBooked(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.bookingId = event.params.bookingId
-  entity.bookerFarcasterId = event.params.bookerFarcasterId
-  entity.profileFarcasterId = event.params.profileFarcasterId
-  entity.day = event.params.day
-  entity.month = event.params.month
-  entity.year = event.params.year
-  entity.timeStartInSeconds = event.params.timeStartInSeconds
-  entity.timePeriodInSeconds = event.params.timePeriodInSeconds
-  entity.amount = event.params.amount
+  let entity = new Booking(event.params.bookingId.toHex());
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  entity.booker = event.params.bookerFarcasterId.toHexString();
+  entity.receiver = event.params.profileFarcasterId.toHexString();
+  entity.day = BigInt.fromI32(event.params.day);
+  entity.month = BigInt.fromI32(event.params.month);
+  entity.year = BigInt.fromI32(event.params.year);
+  entity.timeStartInSeconds = event.params.timeStartInSeconds;
+  entity.timePeriodInSeconds = event.params.timePeriodInSeconds;
+  entity.receiverRevenue = event.params.amount;
+  entity.transactionHash = event.transaction.hash;
+  entity.save();
 }
 
 export function handleCallCancelled(event: CallCancelledEvent): void {
-  let entity = new CallCancelled(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.bookingId = event.params.bookingId
+  let entity = Booking.load(event.params.bookingId.toHex());
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  // delete this entity
 }
 
 export function handleProfileCreated(event: ProfileCreatedEvent): void {
-  let entity = new ProfileCreated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.farcasterId = event.params.farcasterId
-  entity.timeSlots = event.params.timeSlots
-  entity.timePeriods = event.params.timePeriods
-  entity.pricing = event.params.pricing
-  entity.minimumKarma = event.params.minimumKarma
-  entity.profileMetadata = event.params.profileMetadata
+  let entity = new Profile(event.params.farcasterId.toString());
 
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
+  entity.farcasterId = event.params.farcasterId;
+  entity.timeSlots = event.params.timeSlots;
+  entity.timePeriods = event.params.timePeriods;
+  entity.prices = event.params.pricing;
+  entity.minimumKarma = event.params.minimumKarma;
+  entity.metadata = event.params.profileMetadata;
+  entity.transactionHash = event.transaction.hash;
 
-  entity.save()
+  entity.save();
 }
 
 export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
-  let entity = new ProfileUpdated(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.farcasterId = event.params.farcasterId
-  entity.timeSlots = event.params.timeSlots
-  entity.timePeriods = event.params.timePeriods
-  entity.pricing = event.params.pricing
-  entity.minimumKarma = event.params.minimumKarma
-  entity.profileMetadata = event.params.profileMetadata
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
+  let entity = Profile.load(event.params.farcasterId.toString());
+  if (entity != null) {
+    entity.farcasterId = event.params.farcasterId;
+    entity.timeSlots = event.params.timeSlots;
+    entity.timePeriods = event.params.timePeriods;
+    entity.prices = event.params.pricing;
+    entity.minimumKarma = event.params.minimumKarma;
+    entity.metadata = event.params.profileMetadata;
+    entity.save();
+  }
 }
