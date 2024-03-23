@@ -1,12 +1,14 @@
 import Link from "next/link";
-
+import BaseLayout from "@/components/layouts/BaseLayout";
+import CreateSlot from "@/components/CreateSlot";
+import Analytics from "@/components/Analytics";
 import type { Metadata } from "next";
 import { fetchMetadata } from "frames.js/next";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "New api example",
-    description: "This is a new api example",
+    title: "CalCast",
+    description: "Scheduling infrastructure for the new social.",
     other: {
       ...(await fetchMetadata(
         new URL("/frames", process.env.HOST || "http://localhost:3000")
@@ -16,5 +18,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  return <div>New api example. </div>;
+  return (
+    <BaseLayout pageTitle="Dashboard">
+      <Analytics />
+      <CreateSlot />
+    </BaseLayout>
+  );
 }
