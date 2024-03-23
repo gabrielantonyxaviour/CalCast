@@ -1,3 +1,4 @@
+"use client";
 import { SUBGRAPH_URL } from "@/lib/consts";
 import { request, gql } from "graphql-request";
 import { useState, useEffect } from "react";
