@@ -1,0 +1,57 @@
+type BookingPeriodLimitUpdated @entity(immutable: true) {
+  id: Bytes!
+  bookingPeriodLimit: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CallBooked @entity(immutable: true) {
+  id: Bytes!
+  bookingId: BigInt! # uint256
+  bookerFarcasterId: BigInt! # uint256
+  profileFarcasterId: BigInt! # uint256
+  day: Int! # uint8
+  month: Int! # uint8
+  year: Int! # uint16
+  timeStartInSeconds: BigInt! # uint256
+  timePeriodInSeconds: BigInt! # uint256
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CallCancelled @entity(immutable: true) {
+  id: Bytes!
+  bookingId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProfileCreated @entity(immutable: true) {
+  id: Bytes!
+  farcasterId: BigInt! # uint256
+  timeSlots: [BigInt!]! # uint256[]
+  timePeriods: [BigInt!]! # uint256[]
+  pricing: [BigInt!]! # uint256[]
+  minimumKarma: BigInt! # uint256
+  profileMetadata: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProfileUpdated @entity(immutable: true) {
+  id: Bytes!
+  farcasterId: BigInt! # uint256
+  timeSlots: [BigInt!]! # uint256[]
+  timePeriods: [BigInt!]! # uint256[]
+  pricing: [BigInt!]! # uint256[]
+  minimumKarma: BigInt! # uint256
+  profileMetadata: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

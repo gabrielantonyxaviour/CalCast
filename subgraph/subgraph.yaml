@@ -1,0 +1,36 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: CalCast
+    network: base-testnet
+    source:
+      address: "0xb59978350380C74Ba1551C37c64Eec0c445F798d"
+      abi: CalCast
+      startBlock: 7706027
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BookingPeriodLimitUpdated
+        - CallBooked
+        - CallCancelled
+        - ProfileCreated
+        - ProfileUpdated
+      abis:
+        - name: CalCast
+          file: ./abis/CalCast.json
+      eventHandlers:
+        - event: BookingPeriodLimitUpdated(uint256)
+          handler: handleBookingPeriodLimitUpdated
+        - event: CallBooked(uint256,uint256,uint256,uint8,uint8,uint16,uint256,uint256,uint256)
+          handler: handleCallBooked
+        - event: CallCancelled(uint256)
+          handler: handleCallCancelled
+        - event: ProfileCreated(uint256,uint256[],uint256[],uint256[],uint256,string)
+          handler: handleProfileCreated
+        - event: ProfileUpdated(uint256,uint256[],uint256[],uint256[],uint256,string)
+          handler: handleProfileUpdated
+      file: ./src/cal-cast.ts
