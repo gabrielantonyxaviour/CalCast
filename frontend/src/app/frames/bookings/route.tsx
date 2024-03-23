@@ -179,7 +179,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -191,6 +192,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -203,7 +205,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -211,28 +213,50 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
+                  gap: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Logo
+                <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 68,
+                    height: 68,
+                  }}
+                />
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
 
           <div
             style={{
               color: "white",
-              display: "flex", // flex must be there or it throws error
+              display: "flex",
+              marginTop: 50,
+              fontSize: 36,
             }}
           >
-            Choose A date {d}
+            Choose a date
           </div>
           <div
             style={{
@@ -240,18 +264,19 @@ const handleRequest = frames(async (ctx) => {
               display: "flex",
               gap: 10,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
+              marginTop: 10,
             }}
           >
             {dates.map((date, index) => (
               <div
                 key={index}
                 style={{
-                  padding: 5,
-                  background: "linear-gradient(to right, #9B30FF, #7158FF)",
-
-                  border: index.toString() === d ? "2px solid white" : "none",
-                  borderRadius: 5,
+                  padding: 30,
+                  border: index.toString() === d ? "none" : "1px solid gray",
+                  borderRadius: 15,
+                  backgroundColor: index.toString() === d ? "white" : "none",
+                  color: index.toString() === d ? "black" : "white",
                 }}
               >
                 {date}
@@ -309,7 +334,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -321,6 +347,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -333,7 +360,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -341,28 +368,50 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
+                  gap: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Logo
+                <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 68,
+                    height: 68,
+                  }}
+                />
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
 
           <div
             style={{
               color: "white",
-              display: "flex", // flex must be there or it throws error
+              display: "flex",
+              marginTop: 50,
+              fontSize: 36,
             }}
           >
-            Choose A Time {t}
+            Choose a Time
           </div>
           {/* {visibleTimeSlots.map((timeSlot, index) => (
             <div key={index} style={{ color: "white" }}>
@@ -375,21 +424,20 @@ const handleRequest = frames(async (ctx) => {
               display: "flex",
               gap: 10,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
+              marginTop: 10,
             }}
           >
             {visibleTimeSlots.map((timeSlot, index) => (
               <div
                 key={index}
                 style={{
-                  fontSize: 14,
-                  padding: 5,
-                  background: "linear-gradient(to right, #9B30FF, #7158FF)",
-                  // backgroundColor: "gray",
-
-                  border:
-                    index === parseInt(t) % 4 ? "2px solid white" : "none",
-                  borderRadius: 5,
+                  fontSize: 30,
+                  padding: 15,
+                  backgroundColor: index === parseInt(t) % 4 ? "white" : "none",
+                  color: index === parseInt(t) % 4 ? "black" : "white",
+                  border: index === parseInt(t) % 4 ? "none" : "1px solid gray",
+                  borderRadius: 15,
                 }}
               >
                 {timeSlot}
@@ -517,7 +565,8 @@ const handleRequest = frames(async (ctx) => {
             display: "flex",
             flexDirection: "column",
             gap: 20,
-            justifyContent: "center",
+            // justifyContent: "center",
+
             width: "100%",
             height: "100%",
             backgroundColor: "black",
@@ -529,6 +578,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
             }}
           >
             <div
@@ -541,7 +591,7 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
-                  fontSize: 48,
+                  fontSize: 64,
                 }}
               >
                 CalCast
@@ -549,18 +599,24 @@ const handleRequest = frames(async (ctx) => {
               <div
                 style={{
                   color: "white",
+                  display: "flex",
                 }}
               >
-                Logo
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  width={64}
+                  height={64}
+                  alt="calendar"
+                />
               </div>
             </div>
             <div
               style={{
                 color: "gray",
-                fontSize: 20,
+                fontSize: 40,
               }}
             >
-              Sheduling Infrastructure for Farcaster
+              Scheduling Infrastructure for Farcaster
             </div>
           </div>
           <div
@@ -568,43 +624,65 @@ const handleRequest = frames(async (ctx) => {
               color: "white",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
+              marginTop: 60,
             }}
           >
             <div
               style={{
-                fontSize: 20,
-                marginBottom: 8,
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "flex-end",
               }}
             >
-              0xLeo
+              <div
+                style={{
+                  color: "white",
+                  fontSize: 60,
+                  marginBottom: 8,
+                }}
+              >
+                0xLeo
+              </div>
+              <hr
+                style={{
+                  borderColor: "white",
+                  width: 70,
+                  transform: "rotate(-65deg)",
+                  margin: 0,
+                  borderWidth: 1,
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src="https://calcast.vercel.app/calendar.png"
+                  alt="Circular Image"
+                  style={{
+                    borderRadius: "50%",
+                    border: "1px solid white",
+                    width: 80,
+                    height: 80,
+                  }}
+                />
+              </div>
             </div>
-            <hr
-              style={{
-                width: "100%",
-                margin: 0,
-                borderWidth: 0.5,
-                borderColor: "white",
-              }}
-            />{" "}
             <div
               style={{
-                fontSize: 14,
+                fontSize: 30,
                 marginTop: 8,
+                alignSelf: "flex-end",
+                color: "gray",
               }}
             >
               Talks about Infrastructure and tooling
             </div>
           </div>
-          <div
-            style={{
-              color: "white",
-              display: "flex", // flex must be there or it throws error
-              fontSize: 14,
-            }}
-          >
-            You have booked a {dur} min appointment on {d} at {t}
-          </div>
+          <div>Are you sure </div>
         </div>
       ),
       buttons: [
