@@ -682,7 +682,16 @@ const handleRequest = frames(async (ctx) => {
               Talks about Infrastructure and tooling
             </div>
           </div>
-          <div>Are you sure </div>
+          <div
+            style={{
+              color: "white",
+              fontSize: 32,
+              marginTop: 20,
+            }}
+          >
+            You have a scheduled call with 0xLeo on the 24th from 6:30 to 7:00.
+            Are you sure ?
+          </div>
         </div>
       ),
       buttons: [
@@ -693,7 +702,7 @@ const handleRequest = frames(async (ctx) => {
           back
         </Button>,
         <Button action="tx" target="/txdata" post_url="/bookings">
-          Book Now
+          Book for 0.05 ETH
         </Button>,
       ],
     };
