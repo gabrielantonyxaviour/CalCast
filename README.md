@@ -24,7 +24,7 @@ Farcaster has become the social media hub of web3 where people post/interact and
 
 ## Important Links
 
-Application => https://cal-cast.vercel.app/
+Application => https://calcast.vercel.app/
 
 Pitch Deck =>
 
