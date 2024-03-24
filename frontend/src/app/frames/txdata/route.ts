@@ -40,7 +40,7 @@ export async function POST(
       method: "eth_sendTransaction",
       params: {
         abi: storageRegistryABI as Abi,
-        to: "0x935A5B36C923CDFfD3986f2488E92Cf2D1d8c09D",
+        to: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4",
         data: calldata,
         value: "0",
       },
