@@ -21,16 +21,6 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   try {
     const json = await req.json();
-    const params = json.body.searchParams;
-    const encodedString = json.body.searchParams["fid"].toString();
-    const decodedString = atob(encodedString);
-    const decodedJSON = JSON.parse(decodedString);
-    const ownerFID = decodedJSON.fid;
-    const requestFID = params["userfid"];
-    const time = params["t"];
-    const d = params["d"];
-    const dates = getNextSixDates();
-    const date = dates[d];
 
     const frameMessage = await getFrameMessage(json);
 
@@ -44,7 +34,7 @@ export async function POST(
     const calldata = encodeFunctionData({
       abi: ABI,
       functionName: "bookCall",
-      args: [ownerFID, requestFID, time, 0, date, 4, 2024],
+      args: [215781, 389273, 4, 0, 26, 4, 2024],
     });
 
     return NextResponse.json({
