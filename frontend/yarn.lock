@@ -1409,6 +1409,11 @@
     web3-core "^1.8.0"
     web3-core-helpers "^1.8.0"
 
+"@privy-io/wagmi@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.npmjs.org/@privy-io/wagmi/-/wagmi-0.2.2.tgz#be762771a1c92d5a69c7e53bb53cc8628b534122"
+  integrity sha512-ZkA46fyyoPHlk4Ycb2K+J9MqHTcgFxc7pOu27y8AgugD0og2aj4nPxKEPMhRmIqiRWARbJvp6hH8V+Yto/IumQ==
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"

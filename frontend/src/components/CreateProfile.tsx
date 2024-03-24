@@ -8,63 +8,102 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { CONTRACT_ADDRESS, ABI } from "@/lib/consts";
+import { useWriteContract } from "wagmi";
 
 export default function CreateProfile() {
+  const { writeContract } = useWriteContract();
+
   const [profile, setProfile] = useState<{
     _karmaGatingEnabled: boolean;
     _profileMetadata: string;
-    _prices: number[];
-    _timePeriods: number[];
-    _timeSlots: number[];
+    _price: number;
+    _startTimeInSecs: number;
+    _endTimeInSecs: number;
   }>({
     _karmaGatingEnabled: false,
     _profileMetadata: "",
-    _prices: [],
-    _timePeriods: [],
-    _timeSlots: [],
+    _price: 0,
+    _startTimeInSecs: 0,
+    _endTimeInSecs: 0,
   });
   const { connectWallet, user } = usePrivy();
   const { ready, wallets } = useWallets();
 
-  async function createProfile() {
-    const wallet = wallets[0]; // Replace this with your desired wallet
-    const provider = await wallet.getEthereumProvider();
+  function generateTimeSlots(startTime: number, endTime: number): number[] {
+    let slots = [];
+    for (let i = startTime; i <= endTime; i += 900) {
+      slots.push(i);
+    }
+    return slots;
+  }
 
-    const transactionHash = await provider.request({
-      method: "eth_sendTransaction",
-      params: [
-        {
-          to: CONTRACT_ADDRESS,
-          data: encodeFunctionData({
-            abi: ABI,
-            functionName: "createProfile",
-            args: [
-              user?.farcaster?.fid, // Farcaster ID
-              profile._karmaGatingEnabled,
-              user?.farcaster?.ownerAddress, // Profile Metadata
-              profile._prices,
-              profile._timePeriods,
-              profile._timeSlots,
-            ],
-          }),
-          //   value: 100000, // Only necessary for payable methods
-        },
-      ],
+  async function createProfile() {
+    // const wallet = wallets[0]; // Replace this with your desired wallet
+    // console.log("Wallet: ", wallet);
+    // const provider = await wallet.getEthereumProvider();
+    const args = [
+      user?.farcaster?.fid, // Farcaster ID
+      generateTimeSlots(profile._startTimeInSecs, profile._endTimeInSecs), // Time slots
+      [900], // Time periods
+      [profile._price], // Pricing
+      profile._karmaGatingEnabled, // Karma Gating
+      profile._profileMetadata, // Metadata
+    ];
+
+    writeContract({
+      abi: ABI,
+      address: CONTRACT_ADDRESS,
+      functionName: "createProfile",
+      args: args,
     });
 
-    console.log("Transaction hash: ", transactionHash);
+    console.log("Creating profile with args: ", args);
+
+    // const transactionHash = await provider.request({
+    //   method: "eth_sendTransaction",
+    //   params: [
+    //     {
+    //       from: wallet.address,
+    //       to: CONTRACT_ADDRESS,
+    //       data: encodeFunctionData({
+    //         abi: ABI,
+    //         functionName: "createProfile",
+    //         args: args,
+    //       }),
+    //       //   value: 100000, // Only necessary for payable methods
+    //     },
+    //   ],
+    // });
+
+    // console.log("Transaction hash: ", transactionHash);
   }
 
   return (
-    <form className="my-3 ring-1 ring-zinc-900 p-5 rounded-xl flex w-full flex-col justify-start items-start">
-      <h1 className="font-bold w-full text-2xl mb-6 pb-2 border-b-2 border-zinc-900">
-        Create your Calcast Profile
-      </h1>
-
-      <div className="grid grid-cols-3 w-full items-start gap-5">
+    <section className="p-5 rounded-xl flex w-full flex-col justify-start items-start">
+      <div className="grid grid-cols-4 w-full items-start gap-5">
+        <div className="flex flex-col space-y-1.5">
+          <Label htmlFor="name">Choose Location</Label>
+          <Input
+            onChange={(e) => {
+              setProfile({
+                ...profile,
+                _profileMetadata: e.target.value,
+              });
+            }}
+            type="text"
+            className="bg-black"
+            placeholder="Huddle01 Url, Zoom Link, etc."
+          />
+        </div>
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="name">Set Price</Label>
           <Input
+            onChange={(e) => {
+              setProfile({
+                ...profile,
+                _price: parseInt(e.target.value),
+              });
+            }}
             type="number"
             className="bg-black"
             placeholder="Amount to charge per call"
@@ -73,16 +112,35 @@ export default function CreateProfile() {
 
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="name">Choose availability (start/end):</Label>
-          <Input
-            type="datetime-local"
-            className="bg-black"
-            placeholder="Start time"
-          />
-          <Input
-            type="datetime-local"
-            className="bg-black"
-            placeholder="End time"
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              onChange={(e) => {
+                var a = e.target.value.split(":"); // split it at the colons
+                var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                setProfile({
+                  ...profile,
+                  _startTimeInSecs: seconds,
+                });
+              }}
+              type="time"
+              className="bg-black"
+              placeholder="Start time"
+            />
+            <Input
+              onChange={(e) => {
+                var a = e.target.value.split(":"); // split it at the colons
+                var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                // minutes are worth 60 seconds. Hours are worth 60 minutes.
+                setProfile({
+                  ...profile,
+                  _endTimeInSecs: seconds,
+                });
+              }}
+              type="time"
+              className="bg-black"
+              placeholder="End time"
+            />
+          </div>
         </div>
 
         <div className="flex flex-col space-y-1.5 mb-5">
@@ -102,11 +160,12 @@ export default function CreateProfile() {
       </div>
 
       <Button
+        onClick={createProfile}
         variant={"outline"}
-        className="bg-black hover:bg-white hover:text-black flex w-full mt-5"
+        className="bg-black hover:bg-white hover:text-black flex w-full mt-2"
       >
         Create Profile
       </Button>
-    </form>
+    </section>
   );
 }
