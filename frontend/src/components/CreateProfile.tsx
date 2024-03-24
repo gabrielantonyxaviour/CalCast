@@ -56,7 +56,11 @@ export default function CreateProfile() {
   }
 
   return (
-    <form className="flex w-full flex-col justify-start items-start">
+    <form className="my-3 ring-1 ring-zinc-900 p-5 rounded-xl flex w-full flex-col justify-start items-start">
+      <h1 className="font-bold w-full text-2xl mb-6 pb-2 border-b-2 border-zinc-900">
+        Create your Calcast Profile
+      </h1>
+
       <div className="grid grid-cols-3 w-full items-start gap-5">
         <div className="flex flex-col space-y-1.5">
           <Label htmlFor="name">Set Price</Label>
