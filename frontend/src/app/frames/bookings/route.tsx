@@ -21,8 +21,7 @@ import { request, gql } from "graphql-request";
 import { PinataFDK } from "pinata-fdk";
 const pinataJwt = process.env.NEXT_PUBLIC_PINATA_JWT || "";
 const fdk = new PinataFDK({
-  pinata_jwt:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5YzNlOGIxYS0yZTI2LTRkNzUtOGQ0Yi1iMWRmNTUyOGJiYWEiLCJlbWFpbCI6ImZhYmlhbmZlcm5vQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfSx7ImlkIjoiTllDMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxMGQ1OWM0ZTUxZDJmNDUyYWZiOCIsInNjb3BlZEtleVNlY3JldCI6IjQ2MzM2OTA1ZTNmYzQ0ZDI4N2M4YTIwYmFhYWU0NjBmZjZjMjIzOTI5OWI5MjA1MWEzMGY4ZWQ4YWQ4Njg0NWUiLCJpYXQiOjE3MTEwMTc2OTZ9._IUzsF1TY5FktV8Z0yN7Xc0UjcM9Mjh1r1DnqdHW3pU",
+  pinata_jwt: pinataJwt,
   pinata_gateway: "",
 });
 
@@ -80,57 +79,10 @@ const handleRequest = frames(async (ctx) => {
   // const karma = getkarma(ownerFID); // use this to emable this
 
   ///
-  init("1f9e41f9f56744c71a61d1cb98fed31cd");
-  const query = `query MyQuery {
-  Socials(
-    input: {
-      filter: { dappName: { _eq: farcaster }, identity: { _eq: "fc_fid:${ownerFID}" } }
-      blockchain: ethereum
-    }
-  ) {
-    Social {
-      id
-      chainId
-      blockchain
-      dappName
-      dappSlug
-      dappVersion
-      userId
-      userAddress
-      userCreatedAtBlockTimestamp
-      userCreatedAtBlockNumber
-      userLastUpdatedAtBlockTimestamp
-      userLastUpdatedAtBlockNumber
-      userHomeURL
-      userRecoveryAddress
-      userAssociatedAddresses
-      profileBio
-      profileDisplayName
-      profileImage
-      profileUrl
-      profileName
-      profileTokenId
-      profileTokenAddress
-      profileCreatedAtBlockTimestamp
-      profileCreatedAtBlockNumber
-      profileLastUpdatedAtBlockTimestamp
-      profileLastUpdatedAtBlockNumber
-      profileTokenUri
-      isDefault
-      identity
-      fnames
-    }
-  }
-}
-`;
 
-  const { data, error } = await fetchQuery(query);
-
-  console.log("data:", data.Socials.Social[0].profileDisplayName);
-  const ownerName = data.Socials.Social[0].profileDisplayName;
-  const ownerimg = data.Socials.Social[0].profileImage;
-  const ownerbio = data.Socials.Social[0].profileBio;
-  console.log("error:", error);
+  const ownerName = ctx.searchParams["name"];
+  const ownerimg = ctx.searchParams["img"];
+  const ownerbio = ctx.searchParams["bio"];
 
   const booking = ctx.searchParams;
   console.log(ctx);
@@ -164,7 +116,7 @@ const handleRequest = frames(async (ctx) => {
       // const custom_id = ;
       try {
         console.log("sending");
-        await fdk.sendAnalytics(frame_id, frameData, "booking");
+        await fdk.sendAnalytics("389273_15", frameData, "booking");
       } catch (error) {
         console.log(error);
       }

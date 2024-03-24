@@ -201,7 +201,9 @@ const handleRequest = frames(async (ctx) => {
       buttons: [
         <Button
           action="post"
-          target={`/bookings?fid=${ctx.searchParams["fid"].toString()}`}
+          target={`/bookings?fid=${ctx.searchParams[
+            "fid"
+          ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
         >
           Schedule a call now!
         </Button>,
@@ -390,7 +392,7 @@ const handleRequest = frames(async (ctx) => {
           action="post"
           target={`/dashboard/analytics?fid=${ctx.searchParams[
             "fid"
-          ].toString()}`}
+          ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
         >
           Analytics
         </Button>,
