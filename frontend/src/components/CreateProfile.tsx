@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { CONTRACT_ADDRESS, ABI } from "@/lib/consts";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useAccount } from "wagmi";
 
 export default function CreateProfile() {
-  const { writeContract } = useWriteContract();
+  const { writeContract, error } = useWriteContract();
   const { ready, user } = usePrivy();
+  const account = useAccount();
 
   const [profile, setProfile] = useState<{
     _karmaGatingEnabled: boolean;
@@ -56,7 +57,11 @@ export default function CreateProfile() {
       args: args,
     });
 
-    console.log("Creating profile with args: ", args);
+    if (error) {
+      console.error("Error creating profile: ", error);
+    }
+
+    console.log("Creating profile with args: ", args, account?.address);
 
     // const transactionHash = await provider.request({
     //   method: "eth_sendTransaction",

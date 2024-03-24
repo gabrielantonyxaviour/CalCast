@@ -18,7 +18,9 @@ export default function Share() {
   const { user, ready } = usePrivy();
 
   function getURL(frameId: string) {
-    return `https://calcast.vercel.app/frames?frame_id=${frameId}`;
+    return `https://calcast.vercel.app/frames?fid=${btoa(
+      JSON.stringify({ fid: frameId.replace("_15", ""), duration: 15 })
+    )}`;
   }
 
   useEffect(() => {

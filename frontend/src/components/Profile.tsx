@@ -53,7 +53,7 @@ export default function Profile() {
       setFarcasterId(user?.farcaster?.fid);
     }
     getProfile(farcasterId).then((profile) => setProfile(profile));
-  }, [farcasterId]);
+  }, [farcasterId, profile]);
   return (
     <div className=" ring-1 ring-zinc-900 rounded-xl flex flex-col justify-center items-center my-2">
       <h1 className="rounded-xl bg-zinc-900 font-bold w-full text-2xl p-4">

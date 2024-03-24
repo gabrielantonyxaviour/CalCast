@@ -76,7 +76,7 @@ const Chart = ({ data }: any) => {
       <AreaChart
         width={500}
         height={400}
-        data={data.time_periods}
+        data={data?.time_periods}
         margin={{
           top: 10,
           right: 30,
@@ -195,7 +195,7 @@ export default function Analytics() {
               </Button> */}
               </div>
               <div className="mt-3 h-[120px]">
-                <Chart data={data} />
+                {data ? <Chart data={data} /> : <div>Loading...</div>}
               </div>
             </div>
             <DrawerFooter>

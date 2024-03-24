@@ -46,7 +46,7 @@ export default function BaseLayout({
 
       <section className="lg:max-w-5xl lg:w-full ">
         <div className="ring-1 ring-zinc-700 rounded-xl p-8 w-full">
-          {!ready && !authenticated ? (
+          {ready && !authenticated ? (
             // Not Authenticated
             <div className="flex justify-center items-center flex-col">
               <h3 className="text-md mb-5">
