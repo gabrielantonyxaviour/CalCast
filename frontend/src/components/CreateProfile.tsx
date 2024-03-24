@@ -26,8 +26,6 @@ export default function CreateProfile() {
     _startTimeInSecs: 0,
     _endTimeInSecs: 0,
   });
-  const { connectWallet, user } = usePrivy();
-  const { ready, wallets } = useWallets();
 
   function generateTimeSlots(startTime: number, endTime: number): number[] {
     let slots = [];
