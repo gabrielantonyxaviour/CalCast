@@ -12,6 +12,7 @@ import { useWriteContract } from "wagmi";
 
 export default function CreateProfile() {
   const { writeContract } = useWriteContract();
+  const { ready, user } = usePrivy();
 
   const [profile, setProfile] = useState<{
     _karmaGatingEnabled: boolean;
@@ -77,93 +78,99 @@ export default function CreateProfile() {
   }
 
   return (
-    <section className="p-5 rounded-xl flex w-full flex-col justify-start items-start">
-      <div className="grid grid-cols-4 w-full items-start gap-5">
-        <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="name">Choose Location</Label>
-          <Input
-            onChange={(e) => {
-              setProfile({
-                ...profile,
-                _profileMetadata: e.target.value,
-              });
-            }}
-            type="text"
-            className="bg-black"
-            placeholder="Huddle01 Url, Zoom Link, etc."
-          />
-        </div>
-        <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="name">Set Price</Label>
-          <Input
-            onChange={(e) => {
-              setProfile({
-                ...profile,
-                _price: parseInt(e.target.value),
-              });
-            }}
-            type="number"
-            className="bg-black"
-            placeholder="Amount to charge per call"
-          />
-        </div>
+    <>
+      {ready && user && user.farcaster ? (
+        <section className="p-5 rounded-xl flex w-full flex-col justify-start items-start">
+          <div className="grid grid-cols-4 w-full items-start gap-5">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="name">Choose Location</Label>
+              <Input
+                onChange={(e) => {
+                  setProfile({
+                    ...profile,
+                    _profileMetadata: e.target.value,
+                  });
+                }}
+                type="text"
+                className="bg-black"
+                placeholder="Huddle01 Url, Zoom Link, etc."
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="name">Set Price</Label>
+              <Input
+                onChange={(e) => {
+                  setProfile({
+                    ...profile,
+                    _price: parseInt(e.target.value),
+                  });
+                }}
+                type="number"
+                className="bg-black"
+                placeholder="Amount to charge per call"
+              />
+            </div>
 
-        <div className="flex flex-col space-y-1.5">
-          <Label htmlFor="name">Choose availability (start/end):</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              onChange={(e) => {
-                var a = e.target.value.split(":"); // split it at the colons
-                var seconds = +a[0] * 60 * 60 + +a[1] * 60;
-                setProfile({
-                  ...profile,
-                  _startTimeInSecs: seconds,
-                });
-              }}
-              type="time"
-              className="bg-black"
-              placeholder="Start time"
-            />
-            <Input
-              onChange={(e) => {
-                var a = e.target.value.split(":"); // split it at the colons
-                var seconds = +a[0] * 60 * 60 + +a[1] * 60;
-                // minutes are worth 60 seconds. Hours are worth 60 minutes.
-                setProfile({
-                  ...profile,
-                  _endTimeInSecs: seconds,
-                });
-              }}
-              type="time"
-              className="bg-black"
-              placeholder="End time"
-            />
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="name">Choose availability (start/end):</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  onChange={(e) => {
+                    var a = e.target.value.split(":"); // split it at the colons
+                    var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                    setProfile({
+                      ...profile,
+                      _startTimeInSecs: seconds,
+                    });
+                  }}
+                  type="time"
+                  className="bg-black"
+                  placeholder="Start time"
+                />
+                <Input
+                  onChange={(e) => {
+                    var a = e.target.value.split(":"); // split it at the colons
+                    var seconds = +a[0] * 60 * 60 + +a[1] * 60;
+                    // minutes are worth 60 seconds. Hours are worth 60 minutes.
+                    setProfile({
+                      ...profile,
+                      _endTimeInSecs: seconds,
+                    });
+                  }}
+                  type="time"
+                  className="bg-black"
+                  placeholder="End time"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-1.5 mb-5">
+              <Label htmlFor="name">Enable Karma Gating</Label>
+              <Toggle
+                variant={"outline"}
+                aria-label="Toggle italic"
+                onClick={() => {
+                  profile._karmaGatingEnabled
+                    ? setProfile({ ...profile, _karmaGatingEnabled: false })
+                    : setProfile({ ...profile, _karmaGatingEnabled: true });
+                }}
+              >
+                Karma Gating
+              </Toggle>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col space-y-1.5 mb-5">
-          <Label htmlFor="name">Enable Karma Gating</Label>
-          <Toggle
+          <Button
+            onClick={createProfile}
             variant={"outline"}
-            aria-label="Toggle italic"
-            onClick={() => {
-              profile._karmaGatingEnabled
-                ? setProfile({ ...profile, _karmaGatingEnabled: false })
-                : setProfile({ ...profile, _karmaGatingEnabled: true });
-            }}
+            className="bg-black hover:bg-white hover:text-black flex w-full mt-2"
           >
-            Karma Gating
-          </Toggle>
-        </div>
-      </div>
-
-      <Button
-        onClick={createProfile}
-        variant={"outline"}
-        className="bg-black hover:bg-white hover:text-black flex w-full mt-2"
-      >
-        Create Profile
-      </Button>
-    </section>
+            Create Profile
+          </Button>
+        </section>
+      ) : (
+        <div>Loading...</div>
+      )}
+    </>
   );
 }

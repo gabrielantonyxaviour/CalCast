@@ -108,7 +108,7 @@ function formatDate(date: Date) {
 }
 
 export default function Analytics() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<any>(null);
   const [frameId, setFrameId] = useState<string>("");
   const { user, ready } = usePrivy();
 
