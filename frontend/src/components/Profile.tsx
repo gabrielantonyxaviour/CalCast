@@ -2,6 +2,8 @@
 import { SUBGRAPH_URL } from "@/lib/consts";
 import { request, gql } from "graphql-request";
 import { useState, useEffect } from "react";
+import CreateProfile from "@/components/CreateProfile";
+import { usePrivy } from "@privy-io/react-auth";
 
 async function getProfile(farcasterId: string) {
   try {
@@ -33,23 +35,25 @@ async function getProfile(farcasterId: string) {
   }
 }
 
-export default function Profile({
-  farcasterId,
-}: Readonly<{ farcasterId: string }>) {
+export default function Profile() {
   const [profile, setProfile] = useState<any>(null);
+  const { user, ready } = usePrivy();
+  const [farcasterId, setFarcasterId] = useState<any>(0);
 
   useEffect(() => {
+    if (ready && user && user.farcaster) {
+      setFarcasterId(user?.farcaster?.fid);
+    }
     getProfile(farcasterId).then((profile) => setProfile(profile));
   }, [farcasterId]);
   return (
-    <div className="flex mt-5">
-      <h1>Your Preferences: </h1>
+    <div className="flex my-2">
       {profile ? (
         <div className="ml-5">
           <pre>{JSON.stringify(profile, null, 2)}</pre>
         </div>
       ) : (
-        <p className="ml-5">{"No profile found."}</p>
+        <CreateProfile />
       )}
     </div>
   );

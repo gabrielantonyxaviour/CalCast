@@ -5,7 +5,7 @@ import Analytics from "@/components/Analytics";
 import type { Metadata } from "next";
 import { fetchMetadata } from "frames.js/next";
 import Profile from "@/components/Profile";
-import CreateProfile from "@/components/CreateProfile";
+import Share from "@/components/Share";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -24,9 +24,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   return (
-    <BaseLayout pageTitle="Dashboard">
-      <CreateProfile />
-      <Profile farcasterId="1" />
+    <BaseLayout pageTitle="Good day, ser!">
+      <Profile />
+      <Share farcasterId="215781" />
       <Analytics />
       <CreateSlot />
     </BaseLayout>
