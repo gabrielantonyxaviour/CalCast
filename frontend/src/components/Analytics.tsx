@@ -70,33 +70,34 @@ const data = [
   },
 ];
 
-export class Chart extends PureComponent {
-  static demoUrl = "https://codesandbox.io/s/simple-area-chart-4ujxw";
-
-  render() {
-    return (
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart
-          width={500}
-          height={400}
-          data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
-        </AreaChart>
-      </ResponsiveContainer>
-    );
-  }
-}
+const Chart = ({ data }: any) => {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart
+        width={500}
+        height={400}
+        data={data.time_periods}
+        margin={{
+          top: 10,
+          right: 30,
+          left: 0,
+          bottom: 0,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="period_start_time" />
+        <YAxis />
+        <Tooltip />
+        <Area
+          type="monotone"
+          dataKey="interactions"
+          stroke="#8884d8"
+          fill="#8884d8"
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+};
 
 // Function to format date in YYYY-MM-DD HH:MM:SS format
 function formatDate(date: Date) {
@@ -112,24 +113,23 @@ export default function Analytics() {
   const { user, ready } = usePrivy();
 
   async function fetchAnalytics(frameId: string) {
-    // Values in YYYY-MM-DD HH:MM:SS format
     const today = new Date();
-    fetch(
-      `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frameId}&start_date=${
-        // A very old date
-        formatDate(new Date(0))
-      }&end_date=${formatDate(today)}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT || ""}`,
-        },
-      }
-    )
+    const query = `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frameId}&start_date=${
+      // A very old date
+      encodeURIComponent("2021-01-01 00:00:00")
+    }&end_date=${encodeURIComponent(formatDate(today))}`;
+
+    console.log(query);
+    fetch(query, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT || ""}`,
+      },
+    })
       .then((response) => response.json())
       .then((response) => {
-        console.log("Chart data: ", response);
         setData(response);
+        console.log("Chart data: ", data);
       })
       .catch((err) => console.error(err));
   }
@@ -178,7 +178,9 @@ export default function Analytics() {
             <div className="p-4 pb-0">
               <div className="flex items-center justify-center space-x-2">
                 <div className="flex-1 text-center">
-                  <div className="text-7xl font-bold tracking-tighter">123</div>
+                  <div className="text-7xl font-bold tracking-tighter">
+                    {data?.total_interactions || 0}
+                  </div>
                   <div className="text-[0.70rem] uppercase text-muted-foreground">
                     Total interactions
                   </div>
@@ -193,13 +195,16 @@ export default function Analytics() {
               </Button> */}
               </div>
               <div className="mt-3 h-[120px]">
-                <Chart />
+                <Chart data={data} />
               </div>
             </div>
             <DrawerFooter>
               <DrawerClose asChild>
                 <Button variant="outline">Close</Button>
               </DrawerClose>
+              <Button onClick={() => fetchAnalytics(frameId)} variant="ghost">
+                Refresh
+              </Button>
             </DrawerFooter>
           </div>
         </DrawerContent>

@@ -22,12 +22,20 @@ async function getProfile(farcasterId: string) {
               totalBookings
               totalEarnings
               transactionHash
+              receivedBookings {
+                day
+                id
+                month
+                timeStartInSeconds
+                timePeriodInSeconds
+                year
+              }
             }
         }
       `,
       {}
     );
-    console.log("Profile: ", data);
+    console.log(`Profile for ${farcasterId}: `, data);
     return data?.profiles?.[0];
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -52,8 +60,34 @@ export default function Profile() {
         1. View/Create your Calcast Profile
       </h1>
       {profile ? (
-        <div className="">
-          <pre>{JSON.stringify(profile, null, 2)}</pre>
+        <div className="p-4 rounded grid grid-cols-3 gap-3 justify-start">
+          <p>Karma enabled: {profile.karmaGatingEnabled ? "Yes" : "No"}</p>
+          <p>Meeting location: {profile.metadata}</p>
+          <p>
+            Your availability: {parseInt(profile.timeSlots[0]) / 60 / 60} -{" "}
+            {parseInt(profile.timeSlots[profile.timeSlots.length - 1]) /
+              60 /
+              60}
+          </p>
+          <p>Your meeting price: {profile.prices?.[0]}</p>
+          <p>
+            Your meeting types:{" "}
+            {profile?.timePeriods[0] == "900" ? "15 min" : "30 mins"}
+          </p>
+          <p>
+            Your earnings: {profile.totalEarnings} from {profile.totalBookings}{" "}
+            bookings
+          </p>
+          <p>
+            Your bookings:{" "}
+            {profile.receivedBookings.length > 0
+              ? profile?.receivedBookings?.map((booking: any) => {
+                  return `${booking.day}/${booking.month}/${booking.year} at ${
+                    booking.timeStartInSeconds / 60 / 60
+                  } for ${booking.timePeriodInSeconds / 60 / 60} hours`;
+                })
+              : "No bookings yet"}
+          </p>
         </div>
       ) : (
         <CreateProfile />
