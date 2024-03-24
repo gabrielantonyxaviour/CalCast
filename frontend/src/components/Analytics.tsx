@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import { Minus, Plus } from "lucide-react";
 import { PureComponent } from "react";
 import {
   AreaChart,
@@ -11,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { usePrivy } from "@privy-io/react-auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -108,13 +108,14 @@ function formatDate(date: Date) {
 
 export default function Analytics() {
   const [data, setData] = useState(null);
-  const frame_id = "0x1234";
+  const [frameId, setFrameId] = useState<string>("");
+  const { user, ready } = usePrivy();
 
-  useEffect(() => {
+  async function fetchAnalytics(frameId: string) {
     // Values in YYYY-MM-DD HH:MM:SS format
     const today = new Date();
     fetch(
-      `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frame_id}&start_date=${
+      `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frameId}&start_date=${
         // A very old date
         formatDate(new Date(0))
       }&end_date=${formatDate(today)}`,
@@ -131,40 +132,58 @@ export default function Analytics() {
         setData(response);
       })
       .catch((err) => console.error(err));
+  }
+
+  useEffect(() => {
+    if (ready && user && user.farcaster) {
+      setFrameId(`${user?.farcaster?.fid}_15`);
+      if (frameId) {
+        console.log("Loading analytics for frame ID: ", frameId);
+        fetchAnalytics(frameId);
+      } else {
+        console.error("No frame ID found for user. Can't render analytics.");
+      }
+    }
   }, []);
 
-  return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="bg-zinc-900" variant={"outline"}>
-          View Analytics 📈
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="bg-black">
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Frame Analytics</DrawerTitle>
-            <DrawerDescription>
-              Your aggregated frame interaction data - powered by Pinata APIs.
-            </DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 pb-0">
-            <div className="flex items-center justify-center space-x-2">
-              {/* <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 shrink-0 rounded-full"
-              >
-                <Minus className="h-4 w-4" />
-                <span className="sr-only">Decrease</span>
-              </Button> */}
-              <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">123</div>
-                <div className="text-[0.70rem] uppercase text-muted-foreground">
-                  Total interactions
+  return ready && user && user.farcaster ? (
+    <div className="ring-1 ring-zinc-900 rounded-xl">
+      <div className="flex flex-col p-4 bg-zinc-900 rounded-xl ">
+        <h1 className="font-bold w-full text-2xl">3. View frame analytics</h1>
+        {/* <p className="mt-2 text-sm text-zinc-400">
+          Track your frame interactions and performance over time using
+          Pinata&apos;s Frame Analytics.
+        </p> */}
+      </div>
+      <Drawer>
+        <DrawerTrigger asChild className="my-2 p-4">
+          <div className="flex justify-between items-center">
+            <p>
+              Track your frame interactions and performance over time using
+              Pinata&apos;s Frame Analytics.{" "}
+            </p>
+            <Button className="bg-black rounded-xl" variant={"ghost"}>
+              View Analytics 📈
+            </Button>
+          </div>
+        </DrawerTrigger>
+        <DrawerContent className="bg-black">
+          <div className="mx-auto w-full max-w-sm">
+            <DrawerHeader>
+              <DrawerTitle>Frame Analytics</DrawerTitle>
+              <DrawerDescription>
+                Your aggregated frame interaction data - powered by Pinata APIs.
+              </DrawerDescription>
+            </DrawerHeader>
+            <div className="p-4 pb-0">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="flex-1 text-center">
+                  <div className="text-7xl font-bold tracking-tighter">123</div>
+                  <div className="text-[0.70rem] uppercase text-muted-foreground">
+                    Total interactions
+                  </div>
                 </div>
-              </div>
-              {/* <Button
+                {/* <Button
                 variant="outline"
                 size="icon"
                 className="h-8 w-8 shrink-0 rounded-full"
@@ -172,18 +191,21 @@ export default function Analytics() {
                 <Plus className="h-4 w-4" />
                 <span className="sr-only">Increase</span>
               </Button> */}
+              </div>
+              <div className="mt-3 h-[120px]">
+                <Chart />
+              </div>
             </div>
-            <div className="mt-3 h-[120px]">
-              <Chart />
-            </div>
+            <DrawerFooter>
+              <DrawerClose asChild>
+                <Button variant="outline">Close</Button>
+              </DrawerClose>
+            </DrawerFooter>
           </div>
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Close</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </div>
-      </DrawerContent>
-    </Drawer>
+        </DrawerContent>
+      </Drawer>
+    </div>
+  ) : (
+    <div>Loading</div>
   );
 }
