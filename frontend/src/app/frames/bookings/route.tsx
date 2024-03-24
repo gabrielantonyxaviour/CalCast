@@ -271,7 +271,7 @@ const handleRequest = frames(async (ctx) => {
             action="post"
             target={`/bookings?fid=${ctx.searchParams[
               "fid"
-            ].toString()}&duration=30`}
+            ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&duration=30`}
           >
             30min
           </Button>,
@@ -279,7 +279,7 @@ const handleRequest = frames(async (ctx) => {
             action="post"
             target={`/bookings?fid=${ctx.searchParams[
               "fid"
-            ].toString()}&duration=15`}
+            ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&duration=15`}
           >
             15min
           </Button>,
@@ -433,7 +433,7 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               parseInt(booking["d"].toString()) - 1
-            }`}
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             ⬅️
           </Button>,
@@ -443,7 +443,7 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               parseInt(booking["d"].toString()) + 1
-            }`}
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             ➡️
           </Button>,
@@ -453,7 +453,7 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true`}
+            }&datefixed=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Confirm ✅
           </Button>,
@@ -613,7 +613,9 @@ const handleRequest = frames(async (ctx) => {
             action="post"
             target={`/bookings?fid=${ctx.searchParams[
               "fid"
-            ].toString()}&duration=${booking["duration"]}&d=${booking["d"]}`}
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             back
           </Button>,
@@ -623,7 +625,9 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true&t=${parseInt(booking["t"].toString()) - 1}`}
+            }&datefixed=true&t=${
+              parseInt(booking["t"].toString()) - 1
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             ⬅️
           </Button>,
@@ -633,7 +637,9 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true&t=${parseInt(booking["t"].toString()) + 1}`}
+            }&datefixed=true&t=${
+              parseInt(booking["t"].toString()) + 1
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             ➡️
           </Button>,
@@ -643,7 +649,9 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true&t=${booking["t"]}&timefixed=true`}
+            }&datefixed=true&t=${
+              booking["t"]
+            }&timefixed=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Confirm ✅
           </Button>,
@@ -694,7 +702,9 @@ const handleRequest = frames(async (ctx) => {
               booking["t"]
             }&timefixed=true&captcha=pending&captchaId=${
               res.state.captchaId
-            }&hashvalue=${res.state.valueHash}`}
+            }&hashvalue=${
+              res.state.valueHash
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Verify
           </Button>,
@@ -749,12 +759,14 @@ const handleRequest = frames(async (ctx) => {
                     booking["d"]
                   }&datefixed=true&t=${
                     booking["t"]
-                  }&timefixed=true&captcha=pending&verified=true`
+                  }&timefixed=true&captcha=pending&verified=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`
                 : `/bookings?fid=${ctx.searchParams[
                     "fid"
                   ].toString()}&duration=${booking["duration"]}&d=${
                     booking["d"]
-                  }&datefixed=true&t=${booking["t"]}&timefixed=true`
+                  }&datefixed=true&t=${
+                    booking["t"]
+                  }&timefixed=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`
             }
           >
             {res.isValidated ? "Proceed" : "Try again!"}
@@ -920,7 +932,9 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true&t=${booking["t"]}`}
+            }&datefixed=true&t=${
+              booking["t"]
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             back
           </Button>,
@@ -933,7 +947,7 @@ const handleRequest = frames(async (ctx) => {
               booking["d"]
             }&datefixed=true&t=${
               booking["t"]
-            }&timefixed=true&captcha=pending&verified=true&booked=true`}
+            }&timefixed=true&captcha=pending&verified=true&booked=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Book for 0.05 ETH
           </Button>,
@@ -945,7 +959,7 @@ const handleRequest = frames(async (ctx) => {
               booking["d"]
             }&datefixed=true&t=${
               booking["t"]
-            }&timefixed=true&captcha=pending&verified=true&booked=true`}
+            }&timefixed=true&captcha=pending&verified=true&booked=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Book for 0.05 ETH
           </Button>,
@@ -1126,7 +1140,9 @@ const handleRequest = frames(async (ctx) => {
               "fid"
             ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
-            }&datefixed=true&t=${booking["t"]}`}
+            }&datefixed=true&t=${
+              booking["t"]
+            }&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
           >
             Back
           </Button>,
@@ -1286,7 +1302,9 @@ const handleRequest = frames(async (ctx) => {
       buttons: [
         <Button
           action="post"
-          target={`/dashboard?fid=${ctx.searchParams["fid"].toString()}`}
+          target={`/dashboard?fid=${ctx.searchParams[
+            "fid"
+          ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
         >
           TryAgain
         </Button>,
