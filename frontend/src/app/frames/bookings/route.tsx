@@ -12,13 +12,71 @@ import {
   ValidateCaptchaChallengeInput,
   ValidateCaptchaChallengeOutput,
 } from "@airstack/frames";
+import { init, fetchQuery } from "@airstack/node";
+
 import { createGoogleCalendarLink } from "@/lib/calendar";
 
 const handleRequest = frames(async (ctx) => {
+  const encodedString = ctx.searchParams["fid"].toString();
+  const decodedString = atob(encodedString);
+  const decodedJSON = JSON.parse(decodedString);
+  const ownerFID = decodedJSON.fid;
+  init("1f9e41f9f56744c71a61d1cb98fed31cd");
+  const query = `query MyQuery {
+  Socials(
+    input: {
+      filter: { dappName: { _eq: farcaster }, identity: { _eq: "fc_fid:${ownerFID}" } }
+      blockchain: ethereum
+    }
+  ) {
+    Social {
+      id
+      chainId
+      blockchain
+      dappName
+      dappSlug
+      dappVersion
+      userId
+      userAddress
+      userCreatedAtBlockTimestamp
+      userCreatedAtBlockNumber
+      userLastUpdatedAtBlockTimestamp
+      userLastUpdatedAtBlockNumber
+      userHomeURL
+      userRecoveryAddress
+      userAssociatedAddresses
+      profileBio
+      profileDisplayName
+      profileImage
+      profileUrl
+      profileName
+      profileTokenId
+      profileTokenAddress
+      profileCreatedAtBlockTimestamp
+      profileCreatedAtBlockNumber
+      profileLastUpdatedAtBlockTimestamp
+      profileLastUpdatedAtBlockNumber
+      profileTokenUri
+      isDefault
+      identity
+      fnames
+    }
+  }
+}
+`;
+
+  const { data, error } = await fetchQuery(query);
+
+  console.log("data:", data.Socials.Social[0].profileDisplayName);
+  const ownerName = data.Socials.Social[0].profileDisplayName;
+  const ownerimg = data.Socials.Social[0].profileImage;
+  const ownerbio = data.Socials.Social[0].profileBio;
+  console.log("error:", error);
+
   const booking = ctx.searchParams;
   console.log(ctx);
   const userFID: number = ctx.message!.requesterFid;
-  const ownerFID: number = 215781;
+
   const url =
     "https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000";
   const options = {
@@ -132,7 +190,7 @@ const handleRequest = frames(async (ctx) => {
                     marginBottom: 8,
                   }}
                 >
-                  0xLeo
+                  {ownerName}
                 </div>
                 <hr
                   style={{
@@ -150,7 +208,7 @@ const handleRequest = frames(async (ctx) => {
                   }}
                 >
                   <img
-                    src="https://calcast.vercel.app/calendar.png"
+                    src={ownerimg}
                     alt="Circular Image"
                     style={{
                       borderRadius: "50%",
@@ -169,7 +227,7 @@ const handleRequest = frames(async (ctx) => {
                   color: "gray",
                 }}
               >
-                Talks about Infrastructure and tooling
+                {ownerbio}
               </div>
             </div>
             <div
@@ -185,10 +243,20 @@ const handleRequest = frames(async (ctx) => {
           </div>
         ),
         buttons: [
-          <Button action="post" target="/bookings?duration=30">
+          <Button
+            action="post"
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=30`}
+          >
             30min
           </Button>,
-          <Button action="post" target="/bookings?duration=15">
+          <Button
+            action="post"
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=15`}
+          >
             15min
           </Button>,
           <Button action="link" target="https://calcast.vercel.app">
@@ -260,9 +328,11 @@ const handleRequest = frames(async (ctx) => {
                     alignItems: "center",
                   }}
                 >
-                  <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                  <div style={{ color: "white", fontSize: 32 }}>
+                    {ownerName}
+                  </div>
                   <img
-                    src="https://calcast.vercel.app/calendar.png"
+                    src={ownerimg}
                     alt="Circular Image"
                     style={{
                       borderRadius: "50%",
@@ -327,12 +397,17 @@ const handleRequest = frames(async (ctx) => {
           </div>
         ),
         buttons: [
-          <Button action="post" target="/bookings">
+          <Button
+            action="post"
+            target={`/bookings?fid=${ctx.searchParams["fid"].toString()}`}
+          >
             back
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
               parseInt(booking["d"].toString()) - 1
             }`}
           >
@@ -340,7 +415,9 @@ const handleRequest = frames(async (ctx) => {
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
               parseInt(booking["d"].toString()) + 1
             }`}
           >
@@ -348,7 +425,11 @@ const handleRequest = frames(async (ctx) => {
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true`}
           >
             Confirm ✅
           </Button>,
@@ -425,9 +506,11 @@ const handleRequest = frames(async (ctx) => {
                     alignItems: "center",
                   }}
                 >
-                  <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                  <div style={{ color: "white", fontSize: 32 }}>
+                    {ownerName}
+                  </div>
                   <img
-                    src="https://calcast.vercel.app/calendar.png"
+                    src={ownerimg}
                     alt="Circular Image"
                     style={{
                       borderRadius: "50%",
@@ -502,13 +585,17 @@ const handleRequest = frames(async (ctx) => {
         buttons: [
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${booking["d"]}`}
           >
             back
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
             }&datefixed=true&t=${parseInt(booking["t"].toString()) - 1}`}
           >
@@ -516,7 +603,9 @@ const handleRequest = frames(async (ctx) => {
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
               booking["d"]
             }&datefixed=true&t=${parseInt(booking["t"].toString()) + 1}`}
           >
@@ -524,7 +613,11 @@ const handleRequest = frames(async (ctx) => {
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${booking["t"]}&timefixed=true`}
           >
             Confirm ✅
           </Button>,
@@ -567,7 +660,15 @@ const handleRequest = frames(async (ctx) => {
         buttons: [
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&captchaId=${res.state.captchaId}&hashvalue=${res.state.valueHash}`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${
+              booking["t"]
+            }&timefixed=true&captcha=pending&captchaId=${
+              res.state.captchaId
+            }&hashvalue=${res.state.valueHash}`}
           >
             Verify
           </Button>,
@@ -616,8 +717,18 @@ const handleRequest = frames(async (ctx) => {
             action="post"
             target={
               res.isValidated
-                ? `/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&verified=true`
-                : `/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true`
+                ? `/bookings?fid=${ctx.searchParams[
+                    "fid"
+                  ].toString()}&duration=${booking["duration"]}&d=${
+                    booking["d"]
+                  }&datefixed=true&t=${
+                    booking["t"]
+                  }&timefixed=true&captcha=pending&verified=true`
+                : `/bookings?fid=${ctx.searchParams[
+                    "fid"
+                  ].toString()}&duration=${booking["duration"]}&d=${
+                    booking["d"]
+                  }&datefixed=true&t=${booking["t"]}&timefixed=true`
             }
           >
             {res.isValidated ? "Proceed" : "Try again!"}
@@ -724,7 +835,7 @@ const handleRequest = frames(async (ctx) => {
                     marginBottom: 8,
                   }}
                 >
-                  0xLeo
+                  {ownerName}
                 </div>
                 <hr
                   style={{
@@ -742,7 +853,7 @@ const handleRequest = frames(async (ctx) => {
                   }}
                 >
                   <img
-                    src="https://calcast.vercel.app/calendar.png"
+                    src={ownerimg}
                     alt="Circular Image"
                     style={{
                       borderRadius: "50%",
@@ -761,7 +872,7 @@ const handleRequest = frames(async (ctx) => {
                   color: "gray",
                 }}
               >
-                Talks about Infrastructure and tooling
+                {ownerbio}
               </div>
             </div>
             <div
@@ -779,20 +890,36 @@ const handleRequest = frames(async (ctx) => {
         buttons: [
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${booking["t"]}`}
           >
             back
           </Button>,
           <Button
             action="tx"
             target="/txdata"
-            post_url={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&verified=true&booked=true`}
+            post_url={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${
+              booking["t"]
+            }&timefixed=true&captcha=pending&verified=true&booked=true`}
           >
             Book for 0.05 ETH
           </Button>,
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}&timefixed=true&captcha=pending&verified=true&booked=true`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${
+              booking["t"]
+            }&timefixed=true&captcha=pending&verified=true&booked=true`}
           >
             Book for 0.05 ETH
           </Button>,
@@ -915,7 +1042,7 @@ const handleRequest = frames(async (ctx) => {
                     marginBottom: 8,
                   }}
                 >
-                  0xLeo
+                  {ownerName}
                 </div>
                 <hr
                   style={{
@@ -933,7 +1060,7 @@ const handleRequest = frames(async (ctx) => {
                   }}
                 >
                   <img
-                    src="https://calcast.vercel.app/calendar.png"
+                    src={ownerimg}
                     alt="Circular Image"
                     style={{
                       borderRadius: "50%",
@@ -952,7 +1079,7 @@ const handleRequest = frames(async (ctx) => {
                   color: "gray",
                 }}
               >
-                Talks about Infrastructure and tooling
+                {ownerbio}
               </div>
             </div>
             <div
@@ -969,7 +1096,11 @@ const handleRequest = frames(async (ctx) => {
         buttons: [
           <Button
             action="post"
-            target={`/bookings?duration=${booking["duration"]}&d=${booking["d"]}&datefixed=true&t=${booking["t"]}`}
+            target={`/bookings?fid=${ctx.searchParams[
+              "fid"
+            ].toString()}&duration=${booking["duration"]}&d=${
+              booking["d"]
+            }&datefixed=true&t=${booking["t"]}`}
           >
             Back
           </Button>,
@@ -1074,7 +1205,7 @@ const handleRequest = frames(async (ctx) => {
                   marginBottom: 8,
                 }}
               >
-                0xLeo
+                {ownerName}
               </div>
               <hr
                 style={{
@@ -1092,7 +1223,7 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="https://calcast.vercel.app/calendar.png"
+                  src={ownerimg}
                   alt="Circular Image"
                   style={{
                     borderRadius: "50%",
@@ -1111,7 +1242,7 @@ const handleRequest = frames(async (ctx) => {
                 color: "gray",
               }}
             >
-              Talks about Infrastructure and tooling
+              {ownerbio}
             </div>
           </div>
           <div
@@ -1127,7 +1258,10 @@ const handleRequest = frames(async (ctx) => {
         </div>
       ),
       buttons: [
-        <Button action="post" target="/dashboard">
+        <Button
+          action="post"
+          target={`/dashboard?fid=${ctx.searchParams["fid"].toString()}`}
+        >
           TryAgain
         </Button>,
       ],

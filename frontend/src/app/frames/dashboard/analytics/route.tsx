@@ -3,6 +3,11 @@ import { Button } from "frames.js/next";
 import { frames } from "../../frames";
 
 const handleRequest = frames(async (ctx) => {
+  const encodedString = ctx.searchParams["fid"].toString();
+  const decodedString = atob(encodedString);
+  const decodedJSON = JSON.parse(decodedString);
+  const ownerFID = decodedJSON.fid;
+  console.log(ownerFID);
   return {
     accepts: [
       {

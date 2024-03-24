@@ -5,7 +5,10 @@ import { init, fetchQuery } from "@airstack/node";
 
 const handleRequest = frames(async (ctx) => {
   const userFID: number = ctx.message!.requesterFid;
-  const ownerFID: number = 215781;
+  const encodedString = ctx.searchParams["fid"].toString();
+  const decodedString = atob(encodedString);
+  const decodedJSON = JSON.parse(decodedString);
+  const ownerFID = decodedJSON.fid;
   init("1f9e41f9f56744c71a61d1cb98fed31cd");
   const query = `query MyQuery {
   Socials(
@@ -196,7 +199,10 @@ const handleRequest = frames(async (ctx) => {
         </div>
       ),
       buttons: [
-        <Button action="post" target="/bookings">
+        <Button
+          action="post"
+          target={`/bookings?fid=${ctx.searchParams["fid"].toString()}`}
+        >
           Schedule a call now!
         </Button>,
       ],
@@ -380,7 +386,12 @@ const handleRequest = frames(async (ctx) => {
         </div>
       ),
       buttons: [
-        <Button action="post" target="/dashboard/analytics">
+        <Button
+          action="post"
+          target={`/dashboard/analytics?fid=${ctx.searchParams[
+            "fid"
+          ].toString()}`}
+        >
           Analytics
         </Button>,
         <Button action="link" target="https://calcast.vercel.app">
