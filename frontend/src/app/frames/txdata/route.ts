@@ -21,8 +21,8 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   try {
     const json = await req.json();
-    const params = json.searchParams;
-    const encodedString = json.searchParams["fid"].toString();
+    const params = json.body.searchParams;
+    const encodedString = json.body.searchParams["fid"].toString();
     const decodedString = atob(encodedString);
     const decodedJSON = JSON.parse(decodedString);
     const ownerFID = decodedJSON.fid;
@@ -74,7 +74,7 @@ export async function POST(
       chainId: "eip155:84532", // OP Mainnet 10
       method: "eth_sendTransaction",
       params: {
-        abi: storageRegistryABI as Abi,
+        abi: ABI as Abi,
         to: "0x935A5B36C923CDFfD3986f2488E92Cf2D1d8c09D",
         data: calldata,
         value: "0",
