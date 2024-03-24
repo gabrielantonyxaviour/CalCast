@@ -1091,7 +1091,13 @@ const handleRequest = frames(async (ctx) => {
         </Button>,
         <Button
           action="tx"
-          target="/txdata"
+          target={`/txdata?fid=${ctx.searchParams["fid"].toString()}&duration=${
+            booking["duration"]
+          }&d=${booking["d"]}&datefixed=true&t=${
+            booking["t"]
+          }&timefixed=true&captcha=pending&verified=true&booked=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&userfid=${
+            ctx.message!.requesterFid
+          }`}
           post_url={`/bookings?fid=${ctx.searchParams[
             "fid"
           ].toString()}&duration=${booking["duration"]}&d=${

@@ -9,6 +9,8 @@ import {
   getContract,
   http,
 } from "viem";
+import { getNextSixDates } from "@/lib/date";
+
 import { baseSepolia, base } from "viem/chains";
 import { storageRegistryABI } from "./contracts/storage-registry";
 
@@ -19,6 +21,16 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   try {
     const json = await req.json();
+    const params = json.searchParams;
+    const encodedString = json.searchParams["fid"].toString();
+    const decodedString = atob(encodedString);
+    const decodedJSON = JSON.parse(decodedString);
+    const ownerFID = decodedJSON.fid;
+    const requestFID = params["userfid"];
+    const time = params["t"];
+    const d = params["d"];
+    const dates = getNextSixDates();
+    const date = dates[d];
 
     const frameMessage = await getFrameMessage(json);
 
@@ -32,7 +44,7 @@ export async function POST(
     const calldata = encodeFunctionData({
       abi: ABI,
       functionName: "bookCall",
-      args: [215781, 389273, 0, 0, 25, 4, 2024],
+      args: [ownerFID, requestFID, time, 0, date, 4, 2024],
     });
 
     return NextResponse.json({
