@@ -15,12 +15,71 @@ import {
 import { init, fetchQuery } from "@airstack/node";
 
 import { createGoogleCalendarLink } from "@/lib/calendar";
+import { SUBGRAPH_URL } from "@/lib/consts";
+import { request, gql } from "graphql-request";
+
+import { PinataFDK } from "pinata-fdk";
+const pinataJwt = process.env.NEXT_PUBLIC_PINATA_JWT || "";
+const fdk = new PinataFDK({
+  pinata_jwt:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5YzNlOGIxYS0yZTI2LTRkNzUtOGQ0Yi1iMWRmNTUyOGJiYWEiLCJlbWFpbCI6ImZhYmlhbmZlcm5vQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfSx7ImlkIjoiTllDMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiIxMGQ1OWM0ZTUxZDJmNDUyYWZiOCIsInNjb3BlZEtleVNlY3JldCI6IjQ2MzM2OTA1ZTNmYzQ0ZDI4N2M4YTIwYmFhYWU0NjBmZjZjMjIzOTI5OWI5MjA1MWEzMGY4ZWQ4YWQ4Njg0NWUiLCJpYXQiOjE3MTEwMTc2OTZ9._IUzsF1TY5FktV8Z0yN7Xc0UjcM9Mjh1r1DnqdHW3pU",
+  pinata_gateway: "",
+});
+
+async function gettimeslot(farcasterId: string) {
+  try {
+    const data: any = await request(
+      SUBGRAPH_URL,
+      gql`
+        query GetProfile {
+            profiles(where: {farcasterId: "${farcasterId}"}) {
+              timeSlots
+            }
+        }
+      `,
+      {}
+    );
+    console.log("Profile: ", data);
+    return data?.profiles?.[0].timeSlots;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+}
+
+async function getkarma(farcasterId: string) {
+  try {
+    const data: any = await request(
+      SUBGRAPH_URL,
+      gql`
+        query GetProfile {
+            profiles(where: {farcasterId: "${farcasterId}"}) {
+                            karmaGatingEnabled
+
+            }
+        }
+      `,
+      {}
+    );
+    console.log("Profile: ", data);
+    return data?.profiles?.[0].karmaGatingEnabled;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+}
 
 const handleRequest = frames(async (ctx) => {
+  const body = await ctx.request.json();
+
   const encodedString = ctx.searchParams["fid"].toString();
   const decodedString = atob(encodedString);
   const decodedJSON = JSON.parse(decodedString);
   const ownerFID = decodedJSON.fid;
+
+  // const karma = getkarma(ownerFID); // use this to emable this
+
+  ///
   init("1f9e41f9f56744c71a61d1cb98fed31cd");
   const query = `query MyQuery {
   Socials(
@@ -96,6 +155,19 @@ const handleRequest = frames(async (ctx) => {
   }
   if (containsUserFID) {
     if (booking["duration"] === undefined) {
+      const frameData = {
+        untrustedData: body.untrustedData,
+        trustedData: body.trustedData,
+      };
+      console.log(frameData);
+      const frame_id = `${ownerFID}_15`;
+      // const custom_id = ;
+      try {
+        console.log("sending");
+        await fdk.sendAnalytics(frame_id, frameData, "booking");
+      } catch (error) {
+        console.log(error);
+      }
       return {
         accepts: [
           {
@@ -444,6 +516,8 @@ const handleRequest = frames(async (ctx) => {
       const timeslots = createTimeSlots("06:00", "13:00");
       console.log(timeslots);
       const visibleIndex = Math.floor(parseInt(t) / 4);
+
+      const timeSlots = gettimeslot(ownerFID);
 
       const startIndex = visibleIndex * 4;
       const endIndex = Math.min(startIndex + 4, timeslots.length);
