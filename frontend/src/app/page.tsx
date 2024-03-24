@@ -1,6 +1,5 @@
 import Link from "next/link";
 import BaseLayout from "@/components/layouts/BaseLayout";
-import CreateSlot from "@/components/CreateSlot";
 import Analytics from "@/components/Analytics";
 import type { Metadata } from "next";
 import { fetchMetadata } from "frames.js/next";
@@ -26,9 +25,8 @@ export default async function Home() {
   return (
     <BaseLayout pageTitle="Good day, ser!">
       <Profile />
-      <Share farcasterId="215781" />
+      <Share />
       <Analytics />
-      <CreateSlot />
     </BaseLayout>
   );
 }
