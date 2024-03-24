@@ -52,7 +52,7 @@ export function handleCallBooked(event: CallBookedEvent): void {
 }
 
 export function handleCallCancelled(event: CallCancelledEvent): void {
-  store.remove("Booking", event.params.bookingId.toHexString());
+  store.remove("booking", event.params.bookingId.toHexString());
 }
 
 export function handleProfileCreated(event: ProfileCreatedEvent): void {
@@ -85,5 +85,5 @@ export function handleProfileUpdated(event: ProfileUpdatedEvent): void {
 }
 
 export function handleProfileDeleted(event: ProfileDeletedEvent): void {
-  store.remove("Profile", event.params.farcasterId.toHexString());
+  store.remove("profile", event.params.farcasterId.toHexString());
 }

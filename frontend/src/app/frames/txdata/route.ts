@@ -9,15 +9,28 @@ import {
   getContract,
   http,
 } from "viem";
+import { getNextSixDates } from "@/lib/date";
+
 import { baseSepolia, base } from "viem/chains";
 import { storageRegistryABI } from "./contracts/storage-registry";
-import { err } from "neverthrow";
+
+import { ABI } from "../../../lib/consts";
 
 export async function POST(
   req: NextRequest
 ): Promise<NextResponse<TransactionTargetResponse>> {
   try {
     const json = await req.json();
+    const params = json.searchParams;
+    const encodedString = json.searchParams["fid"].toString();
+    const decodedString = atob(encodedString);
+    const decodedJSON = JSON.parse(decodedString);
+    const ownerFID = decodedJSON.fid;
+    const requestFID = params["userfid"];
+    const time = params["t"];
+    const d = params["d"];
+    const dates = getNextSixDates();
+    const date = dates[d];
 
     const frameMessage = await getFrameMessage(json);
 
@@ -29,34 +42,17 @@ export async function POST(
     const units = BigInt(1);
 
     const calldata = encodeFunctionData({
-      abi: storageRegistryABI,
-      functionName: "createProfile",
-      args: [
-        BigInt(1),
-        [BigInt(1), BigInt(1)],
-        [BigInt(1), BigInt(1)],
-        [BigInt(1), BigInt(1)],
-        "Hello",
-      ],
-    });
-
-    const publicClient = createPublicClient({
-      chain: baseSepolia,
-      transport: http(),
-    });
-
-    const storageRegistry = getContract({
-      address: "0x935A5B36C923CDFfD3986f2488E92Cf2D1d8c09D",
-      abi: storageRegistryABI,
-      client: publicClient,
+      abi: ABI,
+      functionName: "bookCall",
+      args: [ownerFID, requestFID, time, 0, date, 4, 2024],
     });
 
     return NextResponse.json({
       chainId: "eip155:84532", // OP Mainnet 10
       method: "eth_sendTransaction",
       params: {
-        abi: storageRegistryABI as Abi,
-        to: "0x935A5B36C923CDFfD3986f2488E92Cf2D1d8c09D",
+        abi: ABI as Abi,
+        to: "0x51d51C87e7f55547D202FCdBb5713bF9d4a5f6A4",
         data: calldata,
         value: "0",
       },
@@ -64,7 +60,7 @@ export async function POST(
   } catch (error) {
     console.log(error);
     const calldata = encodeFunctionData({
-      abi: storageRegistryABI,
+      abi: ABI,
       functionName: "createProfile",
       args: [
         BigInt(1),
