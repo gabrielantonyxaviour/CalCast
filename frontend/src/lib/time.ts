@@ -40,3 +40,25 @@ export function generateTimeSlots(startTime: string, endTime: string): string {
 
   return slots.join(",");
 }
+
+export function generateTimePeriods(
+  startTime: string,
+  endTime: string
+): number[] {
+  const slots = [];
+  let current = startTime;
+
+  while (current <= endTime) {
+    const next = new Date(current);
+    next.setMinutes(next.getMinutes() + 30);
+    const endTimeFormatted = next.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    slots.push(`${current} - ${endTimeFormatted}`);
+    current = endTimeFormatted;
+  }
+
+  return slots.map((time) => parseInt(time));
+}
