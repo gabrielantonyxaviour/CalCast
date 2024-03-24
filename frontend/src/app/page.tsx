@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     other: {
       ...(await fetchMetadata(
         new URL(
-          "/frames",
+          "/frames?fid=eyJmaWQiOjIxNTc4MSwiZHVyYXRpb24iOjE1fQ==",
           "https://calcast.vercel.app" || "http://localhost:3000"
         )
       )),
