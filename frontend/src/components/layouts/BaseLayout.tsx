@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useAccount } from "wagmi";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -20,7 +19,9 @@ export default function BaseLayout({
   pageTitle: string;
   children: React.ReactNode;
 }>) {
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { ready: walletReady, wallets } = useWallets();
+  const { ready, authenticated, user, login, logout, connectWallet } =
+    usePrivy();
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center p-10">
       <div className="absolute top-5 right-5">
@@ -92,6 +93,18 @@ export default function BaseLayout({
                             <p className="text-sm">{user?.farcaster?.bio} </p>
                           </HoverCardContent>
                         </HoverCard>
+                        {walletReady && !wallets[0] ? (
+                          <Button className="" onClick={connectWallet}>
+                            Connect wallet
+                          </Button>
+                        ) : (
+                          <Badge className="text-xs mt-1">
+                            Wallet:{" "}
+                            {wallets[0]?.address.slice(0, 6) +
+                              "..." +
+                              wallets[0]?.address.slice(-5)}
+                          </Badge>
+                        )}
                         <Badge
                           className="bg-black hover:cursor-pointer hover:bg-zinc-900"
                           variant={"outline"}
