@@ -1102,18 +1102,6 @@ const handleRequest = frames(async (ctx) => {
         >
           Book for 0.05 ETH
         </Button>,
-        <Button
-          action="post"
-          target={`/bookings?fid=${ctx.searchParams[
-            "fid"
-          ].toString()}&duration=${booking["duration"]}&d=${
-            booking["d"]
-          }&datefixed=true&t=${
-            booking["t"]
-          }&timefixed=true&captcha=pending&verified=true&booked=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
-        >
-          Book for 0.05 ETH
-        </Button>,
       ],
     };
   } else {
