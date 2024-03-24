@@ -121,7 +121,7 @@ export default function BaseLayout({
               </div>
 
               {authenticated && (
-                <div className="mt-10 flex justify-center items-between flex-col w-full">
+                <div className="mt-5 flex justify-center items-between flex-col w-full">
                   {children}
                 </div>
               )}
