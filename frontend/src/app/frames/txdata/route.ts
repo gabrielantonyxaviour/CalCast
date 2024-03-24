@@ -11,7 +11,8 @@ import {
 } from "viem";
 import { baseSepolia, base } from "viem/chains";
 import { storageRegistryABI } from "./contracts/storage-registry";
-import { err } from "neverthrow";
+
+import { ABI } from "../../../lib/consts";
 
 export async function POST(
   req: NextRequest
@@ -29,26 +30,9 @@ export async function POST(
     const units = BigInt(1);
 
     const calldata = encodeFunctionData({
-      abi: storageRegistryABI,
-      functionName: "createProfile",
-      args: [
-        BigInt(1),
-        [BigInt(1), BigInt(1)],
-        [BigInt(1), BigInt(1)],
-        [BigInt(1), BigInt(1)],
-        "Hello",
-      ],
-    });
-
-    const publicClient = createPublicClient({
-      chain: baseSepolia,
-      transport: http(),
-    });
-
-    const storageRegistry = getContract({
-      address: "0x935A5B36C923CDFfD3986f2488E92Cf2D1d8c09D",
-      abi: storageRegistryABI,
-      client: publicClient,
+      abi: ABI,
+      functionName: "bookCall",
+      args: [215781, 389273, 0, 0, 25, 4, 2024],
     });
 
     return NextResponse.json({
@@ -64,7 +48,7 @@ export async function POST(
   } catch (error) {
     console.log(error);
     const calldata = encodeFunctionData({
-      abi: storageRegistryABI,
+      abi: ABI,
       functionName: "createProfile",
       args: [
         BigInt(1),
