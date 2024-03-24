@@ -10,33 +10,40 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { usePrivy } from "@privy-io/react-auth";
+import { useState, useEffect } from "react";
 
-export default function Share(props: Readonly<{ farcasterId: string }>) {
-  const frame_id = `${props.farcasterId}_15`;
+export default function Share() {
+  const [frameId, setFrameId] = useState<string>("");
+  const { user, ready } = usePrivy();
+
+  function getURL(frameId: string) {
+    return `https://calcast.vercel.app/frames?frame_id=${frameId}`;
+  }
+
+  useEffect(() => {
+    if (ready && user && user.farcaster) {
+      setFrameId(`${user.farcaster.fid}_15`);
+    }
+  }, [ready, user]);
 
   return (
-    <div>
+    <div className="my-5">
       <Card className="bg-black rounded-xl">
-        <CardHeader className="bg-zinc-900 rounded-xl">
-          <CardTitle>Share URL</CardTitle>
+        <CardHeader className="bg-zinc-900 rounded-xl p-4">
+          <CardTitle>2. Share URL</CardTitle>
           <CardDescription>
             Cast you Share URL on Farcaster to start receiving bookings.
           </CardDescription>
         </CardHeader>
-        <CardContent className="bg-black">
+        <CardContent className="bg-black rounded-xl">
           <div className="mt-5 flex justify-center items-center">
-            <Input
-              type="text"
-              disabled
-              value={`https://calcast.vercel.app/frames?frame_id=${frame_id}`}
-            />
+            <Input type="text" disabled value={getURL(frameId)} />
             <Button
               variant={"outline"}
               className="ml-2"
               onClick={() => {
-                navigator.clipboard.writeText(
-                  `https://calcast.vercel.app/frames?frame_id=${frame_id}`
-                );
+                navigator.clipboard.writeText(getURL(frameId));
               }}
             >
               Copy to Clipboard
@@ -46,7 +53,9 @@ export default function Share(props: Readonly<{ farcasterId: string }>) {
               className="ml-2"
               onClick={() => {
                 window.open(
-                  `https://warpcast.com/~/compose?text=Book%20a%20call%20with%20me!&embeds[]=https://calcast.vercel.app/frames?frame_id=${frame_id}`
+                  `https://warpcast.com/~/compose?text=Book%20a%20call%20with%20me!&embeds[]=${getURL(
+                    frameId
+                  )}`
                 );
               }}
             >
