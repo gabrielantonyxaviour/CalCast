@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@airstack/frames": "^1.0.20",
+    "@airstack/node": "^0.0.5",
     "@coinbase/onchainkit": "0.11.0",
     "@privy-io/react-auth": "^1.59.5",
     "@radix-ui/react-avatar": "^1.0.4",

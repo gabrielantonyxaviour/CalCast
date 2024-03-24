@@ -1,10 +1,63 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
+import { init, fetchQuery } from "@airstack/node";
 
 const handleRequest = frames(async (ctx) => {
   const userFID: number = ctx.message!.requesterFid;
   const ownerFID: number = 215781;
+  init("1f9e41f9f56744c71a61d1cb98fed31cd");
+  const query = `query MyQuery {
+  Socials(
+    input: {
+      filter: { dappName: { _eq: farcaster }, identity: { _eq: "fc_fid:${ownerFID}" } }
+      blockchain: ethereum
+    }
+  ) {
+    Social {
+      id
+      chainId
+      blockchain
+      dappName
+      dappSlug
+      dappVersion
+      userId
+      userAddress
+      userCreatedAtBlockTimestamp
+      userCreatedAtBlockNumber
+      userLastUpdatedAtBlockTimestamp
+      userLastUpdatedAtBlockNumber
+      userHomeURL
+      userRecoveryAddress
+      userAssociatedAddresses
+      profileBio
+      profileDisplayName
+      profileImage
+      profileUrl
+      profileName
+      profileTokenId
+      profileTokenAddress
+      profileCreatedAtBlockTimestamp
+      profileCreatedAtBlockNumber
+      profileLastUpdatedAtBlockTimestamp
+      profileLastUpdatedAtBlockNumber
+      profileTokenUri
+      isDefault
+      identity
+      fnames
+    }
+  }
+}
+`;
+
+  const { data, error } = await fetchQuery(query);
+
+  console.log("data:", data.Socials.Social[0].profileDisplayName);
+  const ownerName = data.Socials.Social[0].profileDisplayName;
+  const ownerimg = data.Socials.Social[0].profileImage;
+  const ownerbio = data.Socials.Social[0].profileBio;
+  console.log("error:", error);
+
   if (userFID !== ownerFID) {
     return {
       accepts: [
@@ -100,7 +153,7 @@ const handleRequest = frames(async (ctx) => {
                   marginBottom: 8,
                 }}
               >
-                0xLeo
+                {ownerName}
               </div>
               <hr
                 style={{
@@ -118,7 +171,7 @@ const handleRequest = frames(async (ctx) => {
                 }}
               >
                 <img
-                  src="https://calcast.vercel.app/calendar.png"
+                  src={ownerimg}
                   alt="Circular Image"
                   style={{
                     borderRadius: "50%",
@@ -131,13 +184,13 @@ const handleRequest = frames(async (ctx) => {
             </div>
             <div
               style={{
-                fontSize: 40,
-                marginTop: 8,
+                fontSize: "30px",
+                marginTop: "8px",
                 alignSelf: "flex-end",
                 color: "gray",
               }}
             >
-              Talks about Infrastructure and tooling
+              {ownerbio}
             </div>
           </div>
         </div>
@@ -214,9 +267,9 @@ const handleRequest = frames(async (ctx) => {
                   alignItems: "center",
                 }}
               >
-                <div style={{ color: "white", fontSize: 32 }}>OxLeo</div>
+                <div style={{ color: "white", fontSize: 32 }}>{ownerName}</div>
                 <img
-                  src="https://calcast.vercel.app/calendar.png"
+                  src={ownerimg}
                   alt="Circular Image"
                   style={{
                     borderRadius: "50%",
