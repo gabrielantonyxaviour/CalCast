@@ -34,7 +34,7 @@ export async function POST(
     const calldata = encodeFunctionData({
       abi: ABI,
       functionName: "bookCall",
-      args: [215781, 389273, 4, 0, 26, 4, 2024],
+      args: [215781, 389273, 4, 0, 28, 4, 2024],
     });
 
     return NextResponse.json({
