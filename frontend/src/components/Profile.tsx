@@ -10,22 +10,22 @@ async function getProfile(farcasterId: string) {
       gql`
         query GetProfile {
             profiles(where: {farcasterId: "${farcasterId}"}) {
-                id
-                farcasterId
-                creatorAddress
-                minimumKarma
-                timePeriods
-                timeSlots
-                totalBookings
-                totalEarnings
-                transactionHash
-                metadata
-                prices
+              farcasterId
+              id
+              karmaGatingEnabled
+              metadata
+              prices
+              timePeriods
+              timeSlots
+              totalBookings
+              totalEarnings
+              transactionHash
             }
         }
       `,
       {}
     );
+    console.log("Profile: ", data);
     return data?.profiles?.[0];
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -42,14 +42,14 @@ export default function Profile({
     getProfile(farcasterId).then((profile) => setProfile(profile));
   }, [farcasterId]);
   return (
-    <div>
-      <h1>Profile</h1>
+    <div className="flex mt-5">
+      <h1>Your Preferences: </h1>
       {profile ? (
-        <div>
+        <div className="ml-5">
           <pre>{JSON.stringify(profile, null, 2)}</pre>
         </div>
       ) : (
-        <p>Loading...</p>
+        <p className="ml-5">{"No profile found."}</p>
       )}
     </div>
   );
