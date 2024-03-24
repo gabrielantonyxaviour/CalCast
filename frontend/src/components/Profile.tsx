@@ -47,9 +47,12 @@ export default function Profile() {
     getProfile(farcasterId).then((profile) => setProfile(profile));
   }, [farcasterId]);
   return (
-    <div className="flex my-2">
+    <div className=" ring-1 ring-zinc-900 rounded-xl flex flex-col justify-center items-center my-2">
+      <h1 className="rounded-xl bg-zinc-900 font-bold w-full text-2xl p-4">
+        1. View/Create your Calcast Profile
+      </h1>
       {profile ? (
-        <div className="ml-5">
+        <div className="">
           <pre>{JSON.stringify(profile, null, 2)}</pre>
         </div>
       ) : (
