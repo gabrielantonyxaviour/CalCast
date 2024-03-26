@@ -26,7 +26,7 @@ Farcaster has become the social media hub of web3 where people post/interact and
 
 Application => https://calcast.vercel.app/
 
-Pitch Deck =>
+Pitch Deck => https://www.canva.com/design/DAGAV023eaA/E665-E8LRI0hcwXDcvnsAQ/view?utm_content=DAGAV023eaA&utm_campaign=designshare&utm_medium=link&utm_source=editor
 
 ETHGlboal Dashboard => https://ethglobal.com/showcase/calcast-7g042
 
