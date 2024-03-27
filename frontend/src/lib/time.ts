@@ -13,13 +13,14 @@ export function createTimeSlots(startTime: string, endTime: string): string[] {
 }
 
 function convertSecondsToTime(seconds: number): string {
+  const hours = Math.floor(seconds / 3600);
+  const minutesDecimal = (seconds / 3600 - hours) * 60;
+  const minutes = Math.floor(minutesDecimal);
+
   return (
-    Math.floor(seconds / 3600)
-      .toString()
-      .padStart(2, "0") +
+    hours.toString().padStart(2, "0") +
     ":" +
-    (Math.floor(seconds / 60) % 60).toString().padStart(2, "0") +
-    seconds
+    minutes.toString().padStart(2, "0")
   );
 }
 

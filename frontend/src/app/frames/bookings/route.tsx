@@ -737,7 +737,7 @@ const handleRequest = frames(async (ctx) => {
             style={{
               color: "white",
               display: "flex",
-              gap: 10,
+              gap: 20,
               alignItems: "center",
               justifyContent: "flex-start",
               marginTop: 10,
@@ -749,6 +749,7 @@ const handleRequest = frames(async (ctx) => {
                 style={{
                   fontSize: 30,
                   padding: 15,
+                  paddingLeft: 20,
                   backgroundColor: index === parseInt(t) % 4 ? "white" : "none",
                   color: index === parseInt(t) % 4 ? "black" : "white",
                   border: index === parseInt(t) % 4 ? "none" : "1px solid gray",
