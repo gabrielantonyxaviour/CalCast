@@ -1,12 +1,9 @@
-export function createTimeSlots(startTime: string, endTime: string): string[] {
+export function createTimeSlots(periods: any[]): string[] {
   const slots: string[] = [];
-  var a = startTime.split(":"); // split it at the colons
-  let startTimeInSeconds = +a[0] * 60 * 60 + +a[1] * 60;
-  let currentTime = startTimeInSeconds;
-  var b = endTime.split(":"); // split it at the colons
-  let endTimeInSeconds = +b[0] * 60 * 60 + +b[1] * 60;
-  for (let i = startTimeInSeconds; i <= endTimeInSeconds; i += 900) {
-    slots.push(convertSecondsToTime(i));
+
+  for (const period of periods) {
+    const seconds = parseInt(period);
+    slots.push(convertSecondsToTime(seconds));
   }
 
   return slots;

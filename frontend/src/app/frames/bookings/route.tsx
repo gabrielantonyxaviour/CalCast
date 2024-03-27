@@ -37,7 +37,7 @@ async function gettimeslot(farcasterId: string) {
       `,
       {}
     );
-    console.log("Profile: ", data);
+    console.log("Profile: ", data?.profiles?.[0].timeSlots);
     return data?.profiles?.[0].timeSlots;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -622,11 +622,10 @@ const handleRequest = frames(async (ctx) => {
     }
     const t = booking["t"].toString();
     console.log(t);
-    const timeslots = createTimeSlots("06:00", "13:00");
+    const timeSlots = await gettimeslot(ownerFID);
+    const timeslots = createTimeSlots(timeSlots);
     console.log(timeslots);
     const visibleIndex = Math.floor(parseInt(t) / 4);
-
-    const timeSlots = gettimeslot(ownerFID);
 
     const startIndex = visibleIndex * 4;
     const endIndex = Math.min(startIndex + 4, timeslots.length);
@@ -1117,7 +1116,8 @@ const handleRequest = frames(async (ctx) => {
 
     const dur = booking["duration"].toString();
     const dates = getNextSixDates();
-    const timeslots = createTimeSlots("06:00", "13:00");
+    const timeSlots = await gettimeslot(ownerFID);
+    const timeslots = createTimeSlots(timeSlots);
     const start_date = new Date(
       2024,
       3,
