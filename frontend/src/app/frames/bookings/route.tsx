@@ -1098,7 +1098,7 @@ const handleRequest = frames(async (ctx) => {
             booking["t"]
           }&timefixed=true&captcha=pending&verified=true&booked=true&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&userfid=${
             ctx.message!.requesterFid
-          }`}
+          }&owner=${ownerFID}`}
           post_url={`/bookings?fid=${ctx.searchParams[
             "fid"
           ].toString()}&duration=${booking["duration"]}&d=${
