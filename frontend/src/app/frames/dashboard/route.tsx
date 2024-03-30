@@ -2,6 +2,8 @@
 import { Button } from "frames.js/next";
 import { frames } from "../frames";
 import { init, fetchQuery } from "@airstack/node";
+import { SUBGRAPH_URL } from "@/lib/consts";
+import { request, gql } from "graphql-request";
 
 const handleRequest = frames(async (ctx) => {
   const userFID: number = ctx.message!.requesterFid;
@@ -61,7 +63,31 @@ const handleRequest = frames(async (ctx) => {
   const ownerbio = data.Socials.Social[0].profileBio;
   console.log("error:", error);
 
+  async function getkarma(farcasterId: string) {
+    try {
+      const data: any = await request(
+        SUBGRAPH_URL,
+        gql`
+        query GetProfile {
+            profiles(where: {farcasterId: "${farcasterId}"}) {
+                            karmaGatingEnabled
+
+            }
+        }
+      `,
+        {}
+      );
+      console.log("Profile: ", data?.profiles?.[0].karmaGatingEnabled);
+      return data?.profiles?.[0].karmaGatingEnabled;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  }
+
   if (userFID !== ownerFID) {
+    const karma = await getkarma(ownerFID);
+    console.log(karma);
     return {
       accepts: [
         {
@@ -203,7 +229,7 @@ const handleRequest = frames(async (ctx) => {
           action="post"
           target={`/bookings?fid=${ctx.searchParams[
             "fid"
-          ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
+          ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&karma=${karma}`}
         >
           Schedule a call now!
         </Button>,

@@ -45,28 +45,6 @@ async function gettimeslot(farcasterId: string) {
   }
 }
 
-async function getkarma(farcasterId: string) {
-  try {
-    const data: any = await request(
-      SUBGRAPH_URL,
-      gql`
-        query GetProfile {
-            profiles(where: {farcasterId: "${farcasterId}"}) {
-                            karmaGatingEnabled
-
-            }
-        }
-      `,
-      {}
-    );
-    console.log("Profile: ", data);
-    return data?.profiles?.[0].karmaGatingEnabled;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
-}
-
 const handleRequest = frames(async (ctx) => {
   const body = await ctx.request.json();
 
@@ -84,35 +62,379 @@ const handleRequest = frames(async (ctx) => {
   const ownerbio = ctx.searchParams["bio"];
 
   const booking = ctx.searchParams;
-  console.log(ctx);
+  console.log(booking["karma"]);
   const userFID: number = ctx.message!.requesterFid;
 
   if (booking["duration"] === undefined) {
-    const url =
-      "https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000";
-    const options = {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: `["${ownerFID}"]`,
-    };
-    let containsUserFID;
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      console.log(data);
+    if (booking["karma"]) {
+      const url =
+        "https://graph.cast.k3l.io/scores/personalized/engagement/fids?k=1&limit=1000";
+      const options = {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: `["${ownerFID}"]`,
+      };
+      let containsUserFID;
+      try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        console.log(data);
 
-      containsUserFID = data.result.some((item: any) => item.fid === userFID);
-    } catch (error) {
-      console.log(error);
-    }
+        containsUserFID = data.result.some((item: any) => item.fid === userFID);
+      } catch (error) {
+        console.log(error);
+      }
 
-    if (containsUserFID) {
+      if (containsUserFID) {
+        const frameData = {
+          untrustedData: body.untrustedData,
+          trustedData: body.trustedData,
+        };
+        console.log(frameData);
+        const frame_id = `${ownerFID}_15`;
+        console.log(frame_id);
+        // const custom_id = ;
+        try {
+          console.log("sending");
+          await fdk.sendAnalytics("389273_15", frameData, "booking");
+        } catch (error) {
+          console.log(error);
+        }
+        return {
+          accepts: [
+            {
+              id: "farcaster",
+              version: "vNext",
+            },
+            {
+              id: "xmtp",
+              version: "vNext",
+            },
+          ],
+          image: (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+                // justifyContent: "center",
+
+                width: "100%",
+                height: "100%",
+                backgroundColor: "black",
+                padding: 50,
+                fontSize: 24,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "white",
+                      fontSize: 64,
+                    }}
+                  >
+                    CalCast
+                  </div>
+                  <div
+                    style={{
+                      color: "white",
+                      display: "flex",
+                    }}
+                  >
+                    <img
+                      src="https://calcast.vercel.app/calendar.png"
+                      width={64}
+                      height={64}
+                      alt="calendar"
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    color: "gray",
+                    fontSize: 40,
+                  }}
+                >
+                  Scheduling Infrastructure for Farcaster
+                </div>
+              </div>
+              <div
+                style={{
+                  color: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: 50,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "white",
+                      fontSize: 60,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {ownerName}
+                  </div>
+                  <hr
+                    style={{
+                      borderColor: "white",
+                      width: 70,
+                      transform: "rotate(-65deg)",
+                      margin: 0,
+                      borderWidth: 1,
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={ownerimg}
+                      alt="Circular Image"
+                      style={{
+                        borderRadius: "50%",
+                        border: "1px solid white",
+                        width: 80,
+                        height: 80,
+                      }}
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 30,
+                    marginTop: 8,
+                    alignSelf: "flex-end",
+                    color: "gray",
+                  }}
+                >
+                  {ownerbio}
+                </div>
+              </div>
+              <div
+                style={{
+                  color: "white",
+                  alignSelf: "flex-start",
+                  fontSize: 38,
+                  marginTop: 10,
+                }}
+              >
+                schedule a call for ?
+              </div>
+            </div>
+          ),
+          buttons: [
+            <Button
+              action="post"
+              target={`/bookings?fid=${ctx.searchParams[
+                "fid"
+              ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&duration=30`}
+            >
+              30min
+            </Button>,
+            <Button
+              action="post"
+              target={`/bookings?fid=${ctx.searchParams[
+                "fid"
+              ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}&duration=15`}
+            >
+              15min
+            </Button>,
+            <Button action="link" target="https://calcast.vercel.app">
+              Create shedule
+            </Button>,
+          ],
+        };
+      } else {
+        return {
+          accepts: [
+            {
+              id: "farcaster",
+              version: "vNext",
+            },
+            {
+              id: "xmtp",
+              version: "vNext",
+            },
+          ],
+          image: (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 20,
+                // justifyContent: "center",
+
+                width: "100%",
+                height: "100%",
+                backgroundColor: "black",
+                padding: 50,
+                fontSize: 24,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "white",
+                      fontSize: 64,
+                    }}
+                  >
+                    CalCast
+                  </div>
+                  <div
+                    style={{
+                      color: "white",
+                      display: "flex",
+                    }}
+                  >
+                    <img
+                      src="https://calcast.vercel.app/calendar.png"
+                      width={64}
+                      height={64}
+                      alt="calendar"
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    color: "gray",
+                    fontSize: 40,
+                  }}
+                >
+                  Scheduling Infrastructure for Farcaster
+                </div>
+              </div>
+              <div
+                style={{
+                  color: "white",
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: 50,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: "white",
+                      fontSize: 60,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {ownerName}
+                  </div>
+                  <hr
+                    style={{
+                      borderColor: "white",
+                      width: 70,
+                      transform: "rotate(-65deg)",
+                      margin: 0,
+                      borderWidth: 1,
+                    }}
+                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={ownerimg}
+                      alt="Circular Image"
+                      style={{
+                        borderRadius: "50%",
+                        border: "1px solid white",
+                        width: 80,
+                        height: 80,
+                      }}
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 30,
+                    marginTop: 8,
+                    alignSelf: "flex-end",
+                    color: "gray",
+                  }}
+                >
+                  {ownerbio}
+                </div>
+              </div>
+              <div
+                style={{
+                  color: "white",
+                  alignSelf: "flex-start",
+                  fontSize: 38,
+                  marginTop: 10,
+                }}
+              >
+                Sorry. You havent met the criteria to schedule a call
+              </div>
+            </div>
+          ),
+          buttons: [
+            <Button
+              action="post"
+              target={`/dashboard?fid=${ctx.searchParams[
+                "fid"
+              ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
+            >
+              TryAgain
+            </Button>,
+          ],
+        };
+      }
+    } else {
       const frameData = {
         untrustedData: body.untrustedData,
         trustedData: body.trustedData,
       };
       console.log(frameData);
       const frame_id = `${ownerFID}_15`;
+      console.log(frame_id);
       // const custom_id = ;
       try {
         console.log("sending");
@@ -285,164 +607,6 @@ const handleRequest = frames(async (ctx) => {
           </Button>,
           <Button action="link" target="https://calcast.vercel.app">
             Create shedule
-          </Button>,
-        ],
-      };
-    } else {
-      return {
-        accepts: [
-          {
-            id: "farcaster",
-            version: "vNext",
-          },
-          {
-            id: "xmtp",
-            version: "vNext",
-          },
-        ],
-        image: (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 20,
-              // justifyContent: "center",
-
-              width: "100%",
-              height: "100%",
-              backgroundColor: "black",
-              padding: 50,
-              fontSize: 24,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    color: "white",
-                    fontSize: 64,
-                  }}
-                >
-                  CalCast
-                </div>
-                <div
-                  style={{
-                    color: "white",
-                    display: "flex",
-                  }}
-                >
-                  <img
-                    src="https://calcast.vercel.app/calendar.png"
-                    width={64}
-                    height={64}
-                    alt="calendar"
-                  />
-                </div>
-              </div>
-              <div
-                style={{
-                  color: "gray",
-                  fontSize: 40,
-                }}
-              >
-                Scheduling Infrastructure for Farcaster
-              </div>
-            </div>
-            <div
-              style={{
-                color: "white",
-                display: "flex",
-                flexDirection: "column",
-                marginTop: 50,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: 10,
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <div
-                  style={{
-                    color: "white",
-                    fontSize: 60,
-                    marginBottom: 8,
-                  }}
-                >
-                  {ownerName}
-                </div>
-                <hr
-                  style={{
-                    borderColor: "white",
-                    width: 70,
-                    transform: "rotate(-65deg)",
-                    margin: 0,
-                    borderWidth: 1,
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={ownerimg}
-                    alt="Circular Image"
-                    style={{
-                      borderRadius: "50%",
-                      border: "1px solid white",
-                      width: 80,
-                      height: 80,
-                    }}
-                  />
-                </div>
-              </div>
-              <div
-                style={{
-                  fontSize: 30,
-                  marginTop: 8,
-                  alignSelf: "flex-end",
-                  color: "gray",
-                }}
-              >
-                {ownerbio}
-              </div>
-            </div>
-            <div
-              style={{
-                color: "white",
-                alignSelf: "flex-start",
-                fontSize: 38,
-                marginTop: 10,
-              }}
-            >
-              Sorry. You havent met the criteria to schedule a call
-            </div>
-          </div>
-        ),
-        buttons: [
-          <Button
-            action="post"
-            target={`/dashboard?fid=${ctx.searchParams[
-              "fid"
-            ].toString()}&name=${ownerName}&img=${ownerimg}&bio=${ownerbio}`}
-          >
-            TryAgain
           </Button>,
         ],
       };
