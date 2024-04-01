@@ -10,7 +10,11 @@ function formatDate(date: Date) {
 }
 
 const handleRequest = frames(async (ctx) => {
-  const frame_id = "0x1234";
+  const encodedString = ctx.searchParams["fid"].toString();
+  const decodedString = atob(encodedString);
+  const decodedJSON = JSON.parse(decodedString);
+  const ownerFID = decodedJSON.fid;
+  const frame_id = `${ownerFID}_15`;
   const today = new Date();
   let data;
   fetch(
@@ -31,6 +35,7 @@ const handleRequest = frames(async (ctx) => {
       data = response;
     })
     .catch((err) => console.error(err));
+  console.log(data);
 
   interface TimePeriod {
     interactions: number;
@@ -102,11 +107,6 @@ const handleRequest = frames(async (ctx) => {
 
   console.log(chartUrl);
 
-  const encodedString = ctx.searchParams["fid"].toString();
-  const decodedString = atob(encodedString);
-  const decodedJSON = JSON.parse(decodedString);
-  const ownerFID = decodedJSON.fid;
-  console.log(ownerFID);
   return {
     accepts: [
       {
