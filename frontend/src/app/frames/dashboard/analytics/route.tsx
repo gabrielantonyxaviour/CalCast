@@ -16,26 +16,25 @@ const handleRequest = frames(async (ctx) => {
   const ownerFID = decodedJSON.fid;
   const frame_id = `${ownerFID}_15`;
   const today = new Date();
-  let data;
-  fetch(
-    `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frame_id}&start_date=${
-      // A very old date
-      formatDate(new Date(0))
-    }&end_date=${formatDate(today)}`,
+
+  const response = await fetch(
+    `https://api.pinata.cloud/farcaster/frames/interactions?frame_id=${frame_id}&start_date=${formatDate(
+      new Date(0)
+    )}&end_date=${formatDate(today)}`,
     {
       method: "GET",
       headers: {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT || ""}`,
       },
     }
-  )
-    .then((response) => response.json())
-    .then((response) => {
-      console.log("Chart data: ", response);
-      data = response;
-    })
-    .catch((err) => console.error(err));
-  console.log(data);
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = await response.json();
+  console.log("Chart data: ", data);
 
   interface TimePeriod {
     interactions: number;
@@ -49,27 +48,29 @@ const handleRequest = frames(async (ctx) => {
     total_unique_interactions: number;
   }
 
-  const result: Result = {
-    time_periods: [
-      {
-        interactions: 71,
-        period_start_time: "2024-03-15 00:00:00",
-        unique_interactions: 18,
-      },
-      {
-        interactions: 23,
-        period_start_time: "2024-03-17 00:00:00",
-        unique_interactions: 20,
-      },
-      {
-        interactions: 56,
-        period_start_time: "2024-03-18 00:00:00",
-        unique_interactions: 39,
-      },
-    ],
-    total_interactions: 73,
-    total_unique_interactions: 20,
-  };
+  // const result: Result = {
+  //   time_periods: [
+  //     {
+  //       interactions: 71,
+  //       period_start_time: "2024-03-15 00:00:00",
+  //       unique_interactions: 18,
+  //     },
+  //     {
+  //       interactions: 23,
+  //       period_start_time: "2024-03-17 00:00:00",
+  //       unique_interactions: 20,
+  //     },
+  //     {
+  //       interactions: 56,
+  //       period_start_time: "2024-03-18 00:00:00",
+  //       unique_interactions: 39,
+  //     },
+  //   ],
+  //   total_interactions: 73,
+  //   total_unique_interactions: 20,
+  // };
+  const result: Result = data as Result;
+  console.log(result);
 
   // Initialize arrays to hold labels and data for each dataset
   const labels: string[] = [];
@@ -78,11 +79,10 @@ const handleRequest = frames(async (ctx) => {
 
   // Extract data from the result object
   result.time_periods.forEach((period) => {
-    // Extract the date from the period_start_time
     const date = period.period_start_time.split(" ")[0];
-    // Push the date to the labels array
+
     labels.push(date);
-    // Push interactions and unique_interactions data to their respective arrays
+
     interactionData.push(period.interactions);
     uniqueInteractionData.push(period.unique_interactions);
   });
@@ -92,10 +92,7 @@ const handleRequest = frames(async (ctx) => {
     type: "line",
     data: {
       labels: labels,
-      datasets: [
-        { label: "interaction", data: interactionData },
-        { label: "uniqueInteraction", data: uniqueInteractionData },
-      ],
+      datasets: [{ label: "interaction", data: interactionData }],
     },
   };
 
@@ -103,7 +100,7 @@ const handleRequest = frames(async (ctx) => {
   const encodedChartData = encodeURIComponent(JSON.stringify(chartData));
 
   // Construct the URL
-  const chartUrl = `https://quickchart.io/chart?c=${encodedChartData}&width=300&height=150`;
+  const chartUrl = `https://quickchart.io/chart?c=${encodedChartData}&width=280&height=150`;
 
   console.log(chartUrl);
 
