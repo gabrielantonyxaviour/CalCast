@@ -96,7 +96,7 @@ const handleRequest = frames(async (ctx) => {
         // const custom_id = ;
         try {
           console.log("sending");
-          await fdk.sendAnalytics("389273_15", frameData, "booking");
+          await fdk.sendAnalytics(frame_id, frameData, "booking");
         } catch (error) {
           console.log(error);
         }
@@ -1093,6 +1093,20 @@ const handleRequest = frames(async (ctx) => {
     const d = booking["d"].toString();
 
     const dur = booking["duration"].toString();
+    const frameData = {
+      untrustedData: body.untrustedData,
+      trustedData: body.trustedData,
+    };
+    console.log(frameData);
+    const frame_id = `${ownerFID}_15`;
+    console.log(frame_id);
+    // const custom_id = ;
+    try {
+      console.log("sending");
+      await fdk.sendAnalytics(frame_id, frameData, "payment");
+    } catch (error) {
+      console.log(error);
+    }
 
     return {
       accepts: [
